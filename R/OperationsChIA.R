@@ -93,9 +93,10 @@ vertex.attr.to.regions <- function(graph.obj) {
 #'
 #' @export
 load.chia <- function(input.chia) {
-    chia.raw = read.table(input.chia, sep="\t",
-                          col.names=c("L.chr", "L.start", "L.end", "R.chr", "R.start", "R.end", "Reads"))
-
+    chia.raw = read.table(input.chia, sep="\t")
+    chia.raw = chia.raw[,1:7]
+    colnames(chia.raw) = c("L.chr", "L.start", "L.end", "R.chr", "R.start", "R.end", "Reads")
+    
     # Separate and extend on both sides
     split.raw.chia <- function(chia.raw, columns, flank.size=0) {
        result = chia.raw[,columns]

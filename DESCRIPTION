@@ -4,13 +4,13 @@ Version: 0.0.0.9000
 Authors@R: person("Eric", "Fournier", email = "Fournier.Eric.2@crchudequebec.ulaval.ca", role = c("aut", "cre"))
 Description: Functions for loading, annotating and analyzing ChIA-Pet data.
 Imports:
+Suggests:
+Depends:
+    R (>= 3.2.2),
     ggplot2,
     igraph,
     GenomicRanges,
     eric.utils
-Suggests:
-Depends:
-    R (>= 3.2.2)
 biocViews: Software
 License: GPL
 Encoding: UTF-8
