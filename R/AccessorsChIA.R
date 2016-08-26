@@ -4,7 +4,6 @@
 #'
 #' @return A \linkS4class{GRanges} object with the \code{Regions} from the "\code{chia.obj}" parameter corresponding the the "left side".
 #' of the original data.
-#' @importFrom igraph as_edgelist
 chia.left <- function(chia.obj) {
     return(chia.obj$Regions[as_edgelist(chia.obj$Graph)[,1],])
 }
@@ -15,7 +14,6 @@ chia.left <- function(chia.obj) {
 #'
 #' @return A \linkS4class{GRanges} object with the \code{Regions} from the "\code{chia.obj}" parameter corresponding the the "right side".
 #' of the original data.
-#' @importFrom igraph as_edgelist
 chia.right <- function(chia.obj) {
     return(chia.obj$Regions[as_edgelist(chia.obj$Graph)[,2],])
 }
@@ -139,7 +137,6 @@ has.fitness <- function(chia.obj) {
 #' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
 #'
 #' @return The number of nodes in the chia object.
-#' @importFrom igraph vcount
 #' @export
 number.of.nodes <- function(chia.obj) {
     node.count = vcount(chia.obj$Graph)
@@ -153,7 +150,6 @@ number.of.nodes <- function(chia.obj) {
 #' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
 #'
 #' @return The number of contacts in the chia object.
-#' @importFrom igraph ecount
 #' @export
 number.of.contacts <- function(chia.obj) {
     return(ecount(chia.obj$Graph))
@@ -164,7 +160,6 @@ number.of.contacts <- function(chia.obj) {
 #' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
 #'
 #' @return The number of components in the chia object.
-#' @importFrom igraph components
 #' @export
 number.of.components <- function(chia.obj) {
     return(components(chia.obj$Graph)$no)
@@ -175,7 +170,6 @@ number.of.components <- function(chia.obj) {
 #' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
 #'
 #' @return The mean component size of the chia object.
-#' @importFrom igraph components
 #' @export
 average.component.size <- function(chia.obj) {
     return(mean(components(chia.obj$Graph)$csize))

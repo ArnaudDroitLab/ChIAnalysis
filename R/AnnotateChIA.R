@@ -23,10 +23,6 @@ associate.centralities <- function(chia.obj, which.measures=c("Degree", "Between
 #' @param weight.attr The anme of the edge attribute to be sued as a weight in 
 #'   centrality calculations.
 #'
-#' @importFrom igraph degree
-#' @importFrom igraph estimate_closeness
-#' @importFrom igraph betweenness
-#' @importFrom igraph eigen_centrality
 #' @return A data-frame containing the centrality scores and markers for all vertices in the graph.
 #' @export
 calculate.centralities <- function(chia.obj, which.measures=c("Degree", "Betweenness", "Eigenvector"), weight.attr=NULL) {
@@ -114,10 +110,6 @@ associate.is.in.factory <- function(regions){
 #' @param oneByOne Sould the netwoks be treated one by one or as a whole?
 #' @param method What method sould be used to split data (ignored if split = \code{FALSE}).
 #' @return The annotated chia.obj.
-#' @importFrom igraph components
-#' @importFrom igraph as.undirected
-#' @importFrom igraph delete_edges
-#' @importFrom igraph E
 #' @export
 associate.components <- function(chia.obj){
   # Add data about components
@@ -197,21 +189,12 @@ add.gene.annotation <- function(chia.obj, annotation.df, label) {
 #' Annotate "chia.obj", given as parameter.
 #'
 #' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
-#' @param input.chrom.state The name of the file containing the information about chromatin states.
-#' @param tf.regions A \linkS4class{GRangesList} object containing the TF regions.
-#' @param histone.regions A \linkS4class{GRangesList} object containing the histone regions.
-#' @param pol.regions A \linkS4class{GRangesList} object containing the pol2 regions.
-#' @param expression.levels A data frame containing the levels of expression of genes. according to their EMSEMBL id.
-#' @param genome.build The name of the chosen annotation ("hg38", "mm9", "mm10", "hg19").
-#' @param tssRegion A vector with the region range to TSS.
-#' @param centrality.measures The metrics to be sued for assessing node centrality. See \code{\link{associate.centralities}}.
-#' @param weight.attr The name of the edge attribute to be used as weight, if any.
+#' @param chia.param An object returned by build.chia.params indicating which data should be used for annotating the ChIA object.
 #' @param output.dir The name of the directory where to write the selected annotations.
 #' @param verbose If TRUE, console output is suppressed.
+#' @param skip.centrality If TRUE, centrality scores are not computed.
 #'
 #' @return The annotated "\code{chia.obj}".
-#'
-#' @importFrom igraph degree
 #'
 #' @export
 annotate.chia <- function(chia.obj, chia.param, output.dir=".", verbose=TRUE, skip.centrality=FALSE) {

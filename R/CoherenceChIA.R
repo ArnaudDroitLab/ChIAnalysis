@@ -11,7 +11,6 @@
 #'
 #' @return A list containing the computed data and the generated plot object.
 #'
-#' @import ggplot2
 #' @export
 coherence.test <- function(chia.obj, coherence.function, node.categories, output.file=NULL) {
   # Apply the coherence function
@@ -73,7 +72,6 @@ active.gene.coherence <- function(chia.obj) {
 #'   "Upregulated", "Downregulated" or NA depending on the value of the given 
 #'   fold-change column.
 #'
-#' @importFrom GenomicRanges mcols
 #' @export
 fold.change.coherence <- function(fc.column) {
     force(fc.column)

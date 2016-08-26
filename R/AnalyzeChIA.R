@@ -7,8 +7,6 @@
 #'
 #' @return The matrix used to create the heatmap.
 #'
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 ggsave
 #' @importFrom reshape2 melt
 contact.heatmap <- function(chia.obj, variable.name, label, output.dir) {
   type.df = data.frame(Left=chia.left(chia.obj)[,variable.name],
@@ -52,16 +50,7 @@ contact.heatmap <- function(chia.obj, variable.name, label, output.dir) {
 #' @param TSS Should only the TSS regions be kept?
 #' @param tssRegion tssRegion A vector with the region range to TSS.
 #'
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 geom_boxplot
-#' @importFrom ggplot2 geom_bar
-#' @importFrom ggplot2 ylab
-#' @importFrom ggplot2 xlab
-#' @importFrom ggplot2 ggtitle
-#' @importFrom ggplot2 ggsave
 #' @importFrom cowplot plot_grid
-#' @importFrom GenomicRanges flank
-#' @importFrom GenomicFeatures genes
 #' @export
 boxplot.per.tf <- function(chip.data, biosample, genome.build, chia.obj, output.dir, TSS = TRUE, tssRegion = c(-3000, 3000)) {
 
@@ -164,8 +153,6 @@ boxplot.per.tf <- function(chip.data, biosample, genome.build, chia.obj, output.
 #' @param label The Name to give te the variable name in the resulting heatmap.
 #' @param output.dir The name of the directory where to save the heatmaps.
 #'
-#' @import ggplot2
-#'
 #' @export
 boxplot.by.connectivity <- function(chia.obj, variable.name, label, output.dir){
   data.for.boxplot <- chia.obj$Regions[, c(variable.name, "Degree")]
@@ -187,8 +174,6 @@ boxplot.by.connectivity <- function(chia.obj, variable.name, label, output.dir){
 #' @param essential.genes The ID's of the genes to anlayze. The ID's refer the the ChIA-PET ID's of the nodes.
 #' @param label.x The title of the histogram.
 #' @param output.dir The name of the directory where to save the plot.
-#' @import ggplot2
-#' @importFrom GenomicRanges mcols
 #' @export
 histogram.essential.genes <- function(chia.obj, essential.genes, label.x, output.dir){
   # Convert to data.frame

@@ -88,13 +88,6 @@ vertex.attr.to.regions <- function(graph.obj) {
 #' \item{$Graph}{A directed \linkS4class{igraph} object picturing every interaction between the left side and the right
 #' side of the ChIA-PET data.}}
 #'
-#' @importFrom GenomicRanges GRangesList
-#' @importFrom GenomicRanges GRanges
-#' @importMethodsFrom GenomicRanges findOverlaps
-#' @importFrom igraph make_graph
-#' @importFrom igraph edge_attr
-#' @importFrom igraph set_edge_attr
-#' @importFrom igraph edge_attr<-
 #' @importFrom plyr ddply
 #' @importFrom plyr summarize
 #'
@@ -157,9 +150,6 @@ load.chia <- function(input.chia) {
 #'
 #' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
 #' @param output.dir The name of the directory where to save the files.
-#'
-#' @importFrom utils write.table
-#' @importFrom igraph edge_attr
 #'
 #' @export
 output.annotated.chia <- function(chia.obj, output.dir="output") {
@@ -228,9 +218,6 @@ output.annotated.chia <- function(chia.obj, output.dir="output") {
 #' @param weight.attr The name fo the edge attribute to be used as edge weight.
 #'
 #' @return The ids of the edges to be removed.
-#' @importFrom igraph crossing
-#' @importFrom igraph as.undirected
-#' @importFrom igraph edge_attr
 #' @export
 get.crossing.edges <- function(input.graph, method = igraph::cluster_fast_greedy, weight.attr=NULL){
   communities <- method(as.undirected(input.graph), weights = weight.attr)
@@ -245,12 +232,6 @@ get.crossing.edges <- function(input.graph, method = igraph::cluster_fast_greedy
 #' @param oneByOne Sould the netwoks be treated one by one or as a whole?
 #' @param method What method sould be used to split data (ignored if split = \code{FALSE}).
 #' @return The annotated chia.obj.
-#' @importFrom igraph components
-#' @importFrom igraph as.undirected
-#' @importFrom igraph delete_edges
-#' @importFrom igraph E
-#' @importFrom igraph induced_subgraph
-#' @importFrom igraph set_edge_attr
 #' @export
 community.split <- function(chia.obj, oneByOne = FALSE, method = igraph::cluster_fast_greedy, weight.attr=NULL) {
   edge_attr(chia.obj$Graph)$original.id = 1:ecount(chia.obj$Graph)
@@ -297,7 +278,6 @@ community.split <- function(chia.obj, oneByOne = FALSE, method = igraph::cluster
 #' @param indices The indices of the vertices to be kept.
 #'
 #' @return A chia object containing only the selected vertices.
-#' @importFrom igraph induced_subgraph
 #' @export
 chia.vertex.subset <- function(chia.obj, indices) {
     if(mode(indices) == "logical") {
@@ -314,7 +294,6 @@ chia.vertex.subset <- function(chia.obj, indices) {
 #' @param indices The indices of the vertices to be kept.
 #'
 #' @return A chia object containing only the selected vertices.
-#' @importFrom igraph induced_subgraph
 #' @export
 chia.component.subset <- function(chia.obj, indices, min.selection=1) {
     stopifnot(has.components(chia.obj))
@@ -379,7 +358,6 @@ apply.single.metric.by.component <- function(metric.function, metric.name) {
 #' @param input.chia The file containing processed ChIA-PET data.
 #' @param output.dir The name of the directory where output should be saved.
 #' @return The annotated chia.obj.
-#' @importFrom Biobase cache
 #' @export
 process.chia.pet <- function(input.chia, chia.param, output.dir="output", verbose=TRUE) {
     # Create output directory.

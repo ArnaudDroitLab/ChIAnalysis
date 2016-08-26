@@ -5,7 +5,6 @@
 #' @param breaks The limits to use while cutting into categories.
 #' @return A data frame in which each column corresponds to a category. The data frame is as long as the
 #' "Regions" element of chia.obj, and the values indicate wheter or not a region belongs to a category.
-#' @importFrom GenomicRanges mcols
 #' @export
 categorize.by.breaks <- function(chia.obj, variable.name, breaks = NULL) {
   # Convert data into data frame

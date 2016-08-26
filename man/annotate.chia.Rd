@@ -10,27 +10,13 @@ annotate.chia(chia.obj, chia.param, output.dir = ".", verbose = TRUE,
 \arguments{
 \item{chia.obj}{A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.}
 
+\item{chia.param}{An object returned by build.chia.params indicating which data should be used for annotating the ChIA object.}
+
 \item{output.dir}{The name of the directory where to write the selected annotations.}
 
 \item{verbose}{If TRUE, console output is suppressed.}
 
-\item{input.chrom.state}{The name of the file containing the information about chromatin states.}
-
-\item{tf.regions}{A \linkS4class{GRangesList} object containing the TF regions.}
-
-\item{histone.regions}{A \linkS4class{GRangesList} object containing the histone regions.}
-
-\item{pol.regions}{A \linkS4class{GRangesList} object containing the pol2 regions.}
-
-\item{expression.levels}{A data frame containing the levels of expression of genes. according to their EMSEMBL id.}
-
-\item{genome.build}{The name of the chosen annotation ("hg38", "mm9", "mm10", "hg19").}
-
-\item{tssRegion}{A vector with the region range to TSS.}
-
-\item{centrality.measures}{The metrics to be sued for assessing node centrality. See \code{\link{associate.centralities}}.}
-
-\item{weight.attr}{The name of the edge attribute to be used as weight, if any.}
+\item{skip.centrality}{If TRUE, centrality scores are not computed.}
 }
 \value{
 The annotated "\code{chia.obj}".

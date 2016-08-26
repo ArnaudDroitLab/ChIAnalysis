@@ -53,7 +53,6 @@ metric.list.to.df <- function(metric.list) {
 #' @param file.out The name of the file where to save the plot, or NULL if none should be saved.
 #' @param \dots Paramters to pass to metric.function.
 #' @return The plot.
-#' @import ggplot2
 #' @importFrom reshape2 melt
 #' @export
 chia.plot.metrics <- function(chia.obj, metric.function, node.categories, x.lab = NULL, y.lab = NULL,
@@ -113,7 +112,6 @@ chia.plot.metrics <- function(chia.obj, metric.function, node.categories, x.lab 
 #' @param variable.name The name of the column containing a factor.
 #' @param proportion Should the number of occurences be converted to proportions?
 #' @return A named vector (table) with the number of occurences (or proportions) of each factor in the data.
-#' @importFrom GenomicRanges mcols
 #' @export
 level.counts <- function(chia.subset, variable.name, proportion = TRUE){
   # Convert data into data frame
@@ -138,7 +136,6 @@ level.counts <- function(chia.subset, variable.name, proportion = TRUE){
 #' @param variable.name The name of the column containing a factor.
 #' @param proportion Should the number of occurences be converted to proportions?
 #' @return A named vector (table) with the number of occurences (or proportions) of each category.
-#' @importFrom GenomicRanges mcols
 #' @export
 count.cut <- function(chia.subset, variable.name, proportion = TRUE, ...){
   # Convert data into data frame
@@ -160,7 +157,6 @@ count.cut <- function(chia.subset, variable.name, proportion = TRUE, ...){
 #' @param conditions a string with the condition to respect
 #' @param proportion Should the number of occurences be converted to proportions?
 #' @return A named vector (table) with the number of occurences (or proportions) of each category.
-#' @importFrom GenomicRanges mcols
 #' @export
 subset.counts <- function(chia.subset, all.conditions, proportion = TRUE) {
   # Convert data into data frame
@@ -179,7 +175,6 @@ subset.counts <- function(chia.subset, all.conditions, proportion = TRUE) {
 #' @param chia.subset A list containing a graph and ChIA-PET regions, as returned by \code{\link{chia.vertex.subset}}.
 #' @param number Shoul the number of overlap be counted?
 #' @return A named vector with the presence or absence of each transcription factor.
-#' @importFrom GenomicRanges mcols
 #' @export
 TF.presence <- function(chia.subset, number = FALSE) {
   # Convert data into data frame
@@ -222,7 +217,6 @@ calculate.tf.presence <- function(chia.obj, proportion=TRUE) {
 #' @param chia.subset A list containing a graph and ChIA-PET regions, as returned by \code{\link{chia.vertex.subset}}.
 #' @param variable.name The name of the boolean variable whose proportion should be calculated.
 #' @return The count/proportion of nodes whose attribute named "variable.name" is TRUE.
-#' @importFrom GenomicRanges mcols
 #' @export
 boolean.count <- function(chia.obj, variable.name, proportion=FALSE) {
   # Convert data into data frame

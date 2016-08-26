@@ -8,10 +8,6 @@
 #'
 #' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}
 #' @param output.dir The name of the directory where to save the graphs.
-#'
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 ggsave
-#' @importFrom utils write.table
 analyze.chromatin.states <- function(chia.obj, output.dir="output") {
     if(!has.chrom.state(chia.obj)) {
         warning("No chromatin states to analyze!")
@@ -82,9 +78,6 @@ analyze.annotation <- function(chia.obj, output.dir="output") {
 #'
 #' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
 #' @param output.dir The name of the directory where to save the graphs.
-#'
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 ggsave
 analyze.expression <- function(chia.obj, output.dir="output") {
     if(!(has.degree(chia.obj) && has.expression.levels(chia.obj))) {
         warning("No expression levels to analyze!")
@@ -109,9 +102,6 @@ analyze.expression <- function(chia.obj, output.dir="output") {
 #'
 #' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
 #' @param output.dir The name of the directory where to save the graphs.
-#'
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 ggsave
 analyze.gene.specificity <- function(chia.obj, output.dir="output") {
     if(!has.gene.specificity(chia.obj)) {
         warning("No gene specificity to analyze!")
@@ -145,9 +135,6 @@ analyze.gene.specificity <- function(chia.obj, output.dir="output") {
 #' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
 #' @param output.dir The name of the directory where to save the graphs.
 #'
-#' @importFrom GenomicRanges mcols
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 ggsave
 #' @importFrom reshape2 melt
 analyze.tf <- function(chia.obj, output.dir="output") {
     if(has.transcription.factors(chia.obj)) {
@@ -198,10 +185,6 @@ analyze.tf <- function(chia.obj, output.dir="output") {
 #' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
 #' @param output.dir The name of the directory where to save the graphs.
 #'
-#' @import ggplot2
-#' @importFrom igraph components
-#' @importFrom igraph get.data.frame
-#' @importFrom utils write.table
 #' @export
 analyze.components <- function(chia.obj, output.dir="output") {
   # Analyze components
@@ -262,10 +245,6 @@ analyze.components <- function(chia.obj, output.dir="output") {
 #' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
 #' @param output.dir The name of the directory where to save the graphs.
 #'
-#' @import ggplot2
-#' @importFrom igraph components
-#' @importFrom igraph get.data.frame
-#' @importFrom utils write.table
 analyze.generic.topology <- function(chia.obj, output.dir="output") {
   # Plot an histogram of the number of edges.
   #hist(log2(degree(chia.obj$Graph)), breaks=seq(0, 300, by=5))
