@@ -126,15 +126,21 @@ load.chia <- function(input.chia) {
     max.df = ddply(mapped.df, ~Left*Right, summarize, L.chr=head(L.chr, n=1), L.start=min(L.start), L.end=max(L.end),
                                                       R.chr=head(R.chr, n=1), R.start=min(R.start), R.end=max(R.end), Reads=sum(Reads))
 
+    # Remap IDs: igraph will create as many nodes as max(ids), which will cause problems for us.
+    only.unique = sort(unique(c(max.df$Left, max.df$Right)))
+    remapped.ids = data.frame(Original=only.unique, Remapped=1:length(only.unique))
+    new.left = remapped.ids$Remapped[match(max.df$Left, remapped.ids$Original)]
+    new.right = remapped.ids$Remapped[match(max.df$Right, remapped.ids$Original)]
+                                                      
     # Create iGraph object and set the original coordinates and the number of supporting reads as edge attributes.
-    chia.graph = make_graph(c(rbind(max.df$Left, max.df$Right)), directed=FALSE)
+    chia.graph = make_graph(c(rbind(new.left, new.right)), directed=FALSE)
     edge_attr(chia.graph) <- max.df
 
     # Regions which were only part of a self-loop will have been filtered above
     # and will not be part of the graph object. This will cause a difference between
     # the lengths of single.set and chia.graph.
     # To fix this, we remove all regions which are not in max.df.
-    single.set = single.set[sort(unique(c(max.df$Left, max.df$Right)))]
+    single.set = single.set[only.unique]
     
     chia.obj = list(Regions=as.data.frame(single.set), Graph=chia.graph)
     class(chia.obj) = "ChIA"
