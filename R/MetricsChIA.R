@@ -125,7 +125,7 @@ level.counts <- function(chia.subset, variable.name, proportion = TRUE){
   table <- table(variable.data)
   # If proportion are needed, divide by the total number of nodes
   if (proportion){
-    table <- table / length(chia.subset$Regions)
+    table <- table / length(variable.data)
   }
   return(table)
 }
