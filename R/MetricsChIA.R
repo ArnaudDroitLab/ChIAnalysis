@@ -103,7 +103,7 @@ chia.plot.metrics <- function(chia.obj, metric.function, node.categories, x.lab 
     ggsave(plot.obj, file=file.out)
   }
 
-  return(plot.obj)
+  return(list(Metrics=metric.df, Plot=plot.obj))
 }
 
 #' Counts the occurences of each factor
