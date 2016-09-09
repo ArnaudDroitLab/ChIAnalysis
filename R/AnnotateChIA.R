@@ -222,8 +222,7 @@ annotate.chia <- function(chia.obj, chia.param, output.dir=".", verbose=TRUE, sk
   # Associate chromatin states
   if(!is.null(chia.param$input.chrom.state)) {
     cat(date(), " : Associating chromatin states...\n",cat.sink)
-    tmp = associate.chrom.state(get.granges(chia.obj), chia.param$input.chrom.state)
-    chia.obj$Regions = as.data.frame(tmp)
+    chia.obj$Regions$Chrom.State = chrom.state.match(get.granges(chia.obj), chia.param$input.chrom.state)
   }
 
   # Associate transcription factors
