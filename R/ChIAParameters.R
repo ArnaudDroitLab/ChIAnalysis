@@ -67,7 +67,7 @@ add.encode.data <- function(chia.params) {
 
         # Download chromatin states
         if (is.null(chia.params$input.chrom.state) && genome.build=="hg19") {
-            chia.params$input.chrom.state <- import.chrom.states(biosample, file.path("input/chrom_states", biosample))
+            chia.params$input.chrom.state <- download.chromatin.states(biosample, genome.build)
         }
     }
     
