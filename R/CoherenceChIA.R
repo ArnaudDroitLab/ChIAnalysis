@@ -12,9 +12,9 @@
 #' @return A list containing the computed data and the generated plot object.
 #'
 #' @export
-coherence.test <- function(chia.obj, coherence.function, node.categories, output.file=NULL) {
+coherence.test <- function(chia.obj, coherence.function, node.categories, output.file=NULL, ...) {
   # Apply the coherence function
-  coherence.list = category.apply(chia.obj, coherence.function, node.categories)
+  coherence.list = category.apply(chia.obj, coherence.function, node.categories, ...)
   
   # Count the success/failures from each category.
   coherence.counts = lapply(coherence.list, function(x) {
@@ -81,4 +81,27 @@ fold.change.coherence <- function(fc.column) {
         
         return(direction)
     }
+}
+
+#' Generates a fucntion which takes a chia object, and determine which of its nodes
+#' are in the top 25% and in the bottom 25% of expression.
+#'
+#' @param chia.obj The base ChIA object on which to assess gene activity.
+#' @param top The expression value limit of the top 25% expressed genes.
+#' @param bottom The expression value limit of the bottom 25% expressed genes.
+#'
+#' @return A 2-level vector with 
+#'   "Top", "Bottom" or NA depending on the value of the given 
+#'   fold-change column.
+#'
+#' @export
+expression.coherence <- function(chia.obj, top, bottom) {
+  
+  # Create the vector
+  expression <- rep(NA, times = nrow(chia.obj$Regions))
+  expression[(chia.obj$Regions$Expr.mean <= bottom) & chia.obj$Regions$Gene.Representative] <- "Bottom"
+  expression[(chia.obj$Regions$Expr.mean >= top) & chia.obj$Regions$Gene.Representative] <- "Top"
+  expression <- factor(expression, levels = c("Bottom", "Top"))
+  
+  return(expression)
 }
