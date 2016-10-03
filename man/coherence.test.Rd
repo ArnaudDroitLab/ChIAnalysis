@@ -5,7 +5,7 @@
 \title{Determines if certain attributes are coherent within certain categories of nodes.}
 \usage{
 coherence.test(chia.obj, coherence.function, node.categories,
-  output.file = NULL)
+  output.file = NULL, ...)
 }
 \arguments{
 \item{chia.obj}{The base ChIA object on which to assess intra-category coherence.}
