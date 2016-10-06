@@ -4,7 +4,7 @@
 \alias{subset.counts}
 \title{Counts the number of nodes respecting the given condition(s)}
 \usage{
-subset.counts(chia.subset, all.conditions, proportion = TRUE)
+\method{subset}{counts}(chia.subset, all.conditions, proportion = TRUE)
 }
 \arguments{
 \item{chia.subset}{A list containing a graph and ChIA-PET regions, as returned by \code{\link{chia.vertex.subset}}.}

@@ -4,7 +4,7 @@
 \alias{coherence.test}
 \title{Determines if certain attributes are coherent within certain categories of nodes.}
 \usage{
-coherence.test(chia.obj, coherence.function, node.categories,
+coherence.test(chia.obj, coherence.function, node.categories, m.hyper,
   output.file = NULL, ...)
 }
 \arguments{
@@ -16,7 +16,9 @@ ChIA object.}
 
 \item{node.categories}{A data-frame with a number of rows equal to the number of regions
 in chia.obj, where each column represents a set of indices indicating which nodes belong
-in a givenc ategory.}
+in a given category.}
+
+\item{m.hyper}{The m parameter for the hypergeometric test, namely the total number of coherent genes.}
 
 \item{output.file}{The name of the file where the resulting graph should be saved.}
 }
