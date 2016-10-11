@@ -290,10 +290,13 @@ analyze.central.nodes <- function(chia.obj, output.dir=".") {
   }
   
   if(has.transcription.factors(chia.obj)) {
-    chia.plot.metrics(chia.obj, calculate.tf.presence, centrality.categories, graph.type = "heatmap",
-     x.lab = "Centrality category", y.lab = "Proportion", 
-     file.out = file.path(output.dir, "Proportion of TF as a function of size centrality.pdf"),
-     proportion = TRUE)
+    results = chia.plot.metrics(chia.obj, calculate.tf.presence, centrality.categories, graph.type = "heatmap",
+      x.lab = "Centrality category", y.lab = "Proportion", 
+      file.out = file.path(output.dir, "Proportion of TF as a function of centrality.pdf"),
+      proportion = TRUE)
+    
+      write.table(results$Metrics, file=file.path(output.dir, "Proportion of TF as a function of centrality.txt"), 
+                  sep="\t", row.names=FALSE, col.names=TRUE)
   }
 }
 
