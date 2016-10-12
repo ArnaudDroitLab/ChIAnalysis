@@ -55,7 +55,7 @@ contact.heatmap <- function(chia.obj, variable.name, label, output.dir) {
 boxplot.per.tf <- function(chip.data, biosample, genome.build, chia.obj, output.dir, TSS = TRUE, tssRegion = c(-3000, 3000)) {
 
   # Extract ChIA-PET regions
-  chia.data <- get.granges(chia.obj$Regions)
+  chia.data <- get.granges(chia.obj)
 
   # Exctract all TF
   if (genome.build == "hg19"){
