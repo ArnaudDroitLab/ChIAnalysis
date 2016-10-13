@@ -45,7 +45,7 @@ add.encode.data <- function(chia.params) {
     if(!is.null(biosample) && !is.null(genome.build)) {
         # Download transcription factors
         if (is.null(chia.params$tf.regions)) {
-            chia.params$tf.regions <- download.encode.chip(biosample, genome.build)$Regions
+            chia.params$tf.regions <- download.encode.chip(biosample, genome.build)$narrow$Regions
         }
 
         # Download histone marks
