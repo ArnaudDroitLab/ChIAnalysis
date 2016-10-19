@@ -162,7 +162,8 @@ analyze.tf <- function(chia.obj, output.dir="output") {
 
         # Reorganize TF by slope
         results.df$TF = factor(results.df$TF, levels=rownames(results)[order(results[,4]-results[,1])])
-
+        write.table(results.df, file=file.path(output.dir, "TF presence on contact point by connectivity.txt"), sep="\t", col.names=TRUE, row.names=FALSE)
+        
         ggplot(data=results.df, aes(x=Connectivity, y=Proportion)) +
             geom_line(group=1) +
             facet_wrap(~TF, ncol=10) +
