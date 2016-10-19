@@ -9,7 +9,7 @@ TF.presence(chia.subset, number = FALSE)
 \arguments{
 \item{chia.subset}{A list containing a graph and ChIA-PET regions, as returned by \code{\link{chia.vertex.subset}}.}
 
-\item{number}{Shoul the number of overlap be counted?}
+\item{number}{Should the number of overlap be counted?}
 }
 \value{
 A named vector with the presence or absence of each transcription factor.

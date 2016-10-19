@@ -237,6 +237,57 @@ get.tf <- function(chia.obj) {
     return(chia.obj$Regions[,grepl("TF", colnames(chia.obj$Regions))])
 }
 
+#' Obtain the name of transcription factors for which annotation is available.
+#'
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#'
+#' @return A vector containing the names of the transcription factors for which annotation is available.
+#' @export
+get.tf.names <- function(chia.obj) {
+    stopifnot(has.transcription.factors(chia.obj))
+    return(gsub("TF.overlap.", "", colnames(get.tf(chia.obj))))
+}
+
+#' Obtain the indices of nodes bearing any or all of a set of transcription factors.
+#'
+#' @param chia.obj A ChIA-PET object.
+#' @param tf.names The names of the transcription factor to look for.
+#' @param how.many How many of the selected TFs should be present to return a hit? By default,
+#'    all TFs must be present.
+#'
+#' @return A logical vector indicating which regions bind the given transcription factor.
+#' @export
+nodes.with.tf <- function(chia.obj, tf.names, how.many=length(tf.names)) {
+    numbers = number.of.tfs(chia.obj, tf.names)
+    return(numbers >= how.many)
+}
+
+#' Obtain the number of TFs from a given list that bind all regions within a ChIA-PET object.
+#'
+#' @param chia.obj A ChIA-PET object.
+#' @param tf.names The names of the transcription factor to look for.
+#'
+#' @return An integer vector containing the number of TF in the list binding each region.
+#' @export
+number.of.tfs <- function(chia.obj, tf.names) {
+    tf.data = get.tf(chia.obj)
+    
+    # At the beginning, no TFs have been detected.
+    results = rep(0, nrow(tf.data))
+    
+    for(tf in tf.names) {
+        tf.colname = paste0("TF.overlap.", tf)
+        
+        if(!any(colnames(tf.data)==tf.colname)) {
+            warning(paste0("No information for TF ", tf, " found.\n"))
+        } else {
+            results = results + ifelse(tf.data[,tf.colname] > 0, 1, 0)
+        }
+    }
+    
+    return(results)
+}
+
 #' Returns a list of all statistics for a given ChIA object.
 #'
 #' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.

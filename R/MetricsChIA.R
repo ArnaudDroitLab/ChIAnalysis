@@ -173,7 +173,7 @@ subset.counts <- function(chia.subset, all.conditions, proportion = TRUE) {
 #' Finds which transcription factors are present
 #'
 #' @param chia.subset A list containing a graph and ChIA-PET regions, as returned by \code{\link{chia.vertex.subset}}.
-#' @param number Shoul the number of overlap be counted?
+#' @param number Should the number of overlap be counted?
 #' @return A named vector with the presence or absence of each transcription factor.
 #' @export
 TF.presence <- function(chia.subset, number = FALSE) {
@@ -198,7 +198,7 @@ TF.presence <- function(chia.subset, number = FALSE) {
 }
 
 calculate.tf.presence <- function(chia.obj, proportion=TRUE) {
-    # Get the count of regions where the TF is presence, and rename the output vector
+    # Get the count of regions where the TF is present, and rename the output vector
     # to remove the TF.overlap. prefix.
     results = apply(as.matrix(get.tf(chia.obj)) > 0, 2, sum)
     names(results) = gsub("TF.overlap.", "", names(results))
@@ -244,5 +244,20 @@ functor.constructor <- function(method, variable.name, proportion=FALSE) {
     return(function(x) {
         method(x, variable.name=variable.name, proportion=proportion)
     })
+}
+
+#' Builds a function object for extracting a single named annotation from the ChIA object.
+#'
+#' @param var.name The name of the Regions column to be returned.
+#'   levels.count, count.cut, boolean.count, etc.
+#'
+#' @return A function which extracts the given Regions column as a list.
+#' @export
+region.column.functor <- function(var.name) {
+    function(x) {
+        ret = list(x$Regions[[var.name]])
+        names(ret) = var.name
+        return(ret)
+    }
 }
 

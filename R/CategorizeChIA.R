@@ -92,3 +92,35 @@ categorize.by.component <- function(chia.obj) {
     res = indices.df
     return(lapply(res, which))
 }
+
+#' Creates categories based on the presence of certain transcription factors.
+#'
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param tf.names The transcription factors to be used for the categories. If NULL, all available TFs are used.
+#' @param add.all IF TRUE, a category containing all nodes is added.
+#'
+#' @return A list containing a set of indices, one for each apssed TF combination, indicating which regions
+#'   bind the given TFs.
+#' @export
+categorize.by.tf <- function(chia.obj, tf.names=NULL, add.all=FALSE) {
+    # Initialize the result list.
+    category.list = list()
+    
+    # Add a category with all nodes, if requested.
+    if(add.all) {
+        category.list[["All"]] = 1:number.of.nodes(chia.obj)
+    }
+
+    # If no TFs were provided, use all of them.
+    if(is.null(tf.names)) {
+        get.tf.names(chia.obj)
+    }
+    
+    # For each TF or set of TF, compute a presence vector.
+    for(tf.set in tf.names) {
+        set.name = paste(tf.set, collapse=" & ")
+        category.list[[set.name]] = which(nodes.with.tf(chia.obj, tf.set))
+    }
+    
+    return(category.list)
+}
