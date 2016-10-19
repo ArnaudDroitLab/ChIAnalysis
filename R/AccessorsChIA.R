@@ -256,3 +256,47 @@ get.all.statistics <- function(chia.obj) {
 
     return(results)
 }
+
+#' Returns a summary of the distances between two sets of nodes.
+#'
+#' @param chia.obj The ChIA object on which distances must be computed.
+#' @param from A vector of indices describing the starting nodes in the distance calculations.
+#' @param to A vector of indices describing the destination nodes in the distance calculations.
+#' @param max The maximum distance to be reported.
+#' @param values Report absolute values instead of proportions.
+#'
+#' @return A vector describing the number of/proportion of nodes from 'from'
+#'    with the corresponding distance to nodes in 'to'.
+#' @export
+#' @import igraph
+summarize.distances <- function(chia.obj, from, to, max=3, values=FALSE) {
+  # Get the matrix of pairwise distances.
+  dist.mat = distances(chia.obj$Graph, v=which(from), to=which(to))
+  
+  # Get the shortest distance for all 'from' nodes to any 'to' nodes.
+  shortest.dist = apply(dist.mat, 1, min)
+  
+  # Create table of distancs.
+  dist.table = table(shortest.dist)
+  
+  # Make sure all entries up to max are present.
+  missing.entries = setdiff(0:max, names(dist.table))
+  missing.values = rep(0, length(missing.entries))
+  names(missing.values) = missing.entries
+  dist.table = c(dist.table, missing.values)
+  
+  # Sort back entries.
+  dist.table = dist.table[order(as.integer(names(dist.table)))]
+  
+  # Collapse all entries greater than or equal to max.
+  collapsed = sum(dist.table[-(1:max)])
+  dist.table = dist.table[1:max]
+  dist.table = c(dist.table, collapsed)
+  names(dist.table)[length(dist.table)] = paste0(max, '+')
+  
+  if(values) {
+    return(dist.table)
+  } else {
+    return(dist.table / sum(dist.table))
+  }
+}
