@@ -94,7 +94,7 @@ active.gene.coherence <- function(chia.obj) {
     return(tmp)
 }
 
-#' Generates a fucntion which takes a chia object, and determine which of its nodes
+#' Generates a function which takes a chia object, and determine which of its nodes
 #' have an positive or negative fold-change based on the given column name.
 #'
 #' @param fc.column The column the new function should check for fold-change values.
@@ -116,16 +116,13 @@ fold.change.coherence <- function(fc.column) {
     }
 }
 
-#' Generates a fucntion which takes a chia object, and determine which of its nodes
-#' are in the top 25% and in the bottom 25% of expression.
+#' Determine which regions are in the top 25% and in the bottom 25% of expression.
 #'
 #' @param chia.obj The base ChIA object on which to assess gene activity.
 #' @param top The expression value limit of the top 25% expressed genes.
 #' @param bottom The expression value limit of the bottom 25% expressed genes.
 #'
-#' @return A 2-level vector with 
-#'   "Top", "Bottom" or NA depending on the value of the given 
-#'   fold-change column.
+#' @return A 2-level vector with "Top", "Bottom" or NA depending on its expression level.
 #'
 #' @export
 expression.coherence <- function(chia.obj, top, bottom) {

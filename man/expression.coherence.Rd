@@ -2,8 +2,7 @@
 % Please edit documentation in R/CoherenceChIA.R
 \name{expression.coherence}
 \alias{expression.coherence}
-\title{Generates a fucntion which takes a chia object, and determine which of its nodes
-are in the top 25% and in the bottom 25% of expression.}
+\title{Determine which regions are in the top 25% and in the bottom 25% of expression.}
 \usage{
 expression.coherence(chia.obj, top, bottom)
 }
@@ -15,12 +14,9 @@ expression.coherence(chia.obj, top, bottom)
 \item{bottom}{The expression value limit of the bottom 25% expressed genes.}
 }
 \value{
-A 2-level vector with 
-  "Top", "Bottom" or NA depending on the value of the given 
-  fold-change column.
+A 2-level vector with "Top", "Bottom" or NA depending on its expression level.
 }
 \description{
-Generates a fucntion which takes a chia object, and determine which of its nodes
-are in the top 25% and in the bottom 25% of expression.
+Determine which regions are in the top 25% and in the bottom 25% of expression.
 }
 

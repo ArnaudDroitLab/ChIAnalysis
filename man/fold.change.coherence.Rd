@@ -2,7 +2,7 @@
 % Please edit documentation in R/CoherenceChIA.R
 \name{fold.change.coherence}
 \alias{fold.change.coherence}
-\title{Generates a fucntion which takes a chia object, and determine which of its nodes
+\title{Generates a function which takes a chia object, and determine which of its nodes
 have an positive or negative fold-change based on the given column name.}
 \usage{
 fold.change.coherence(fc.column)
@@ -16,7 +16,7 @@ A function taking a ChIA object, and returning a 2-level vector with
   fold-change column.
 }
 \description{
-Generates a fucntion which takes a chia object, and determine which of its nodes
+Generates a function which takes a chia object, and determine which of its nodes
 have an positive or negative fold-change based on the given column name.
 }
 
