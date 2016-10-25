@@ -351,3 +351,20 @@ summarize.distances <- function(chia.obj, from, to, max=3, values=FALSE) {
     return(dist.table / sum(dist.table))
   }
 }
+
+#' Determiens which regions of a ChIA object are part of gene networks.
+#'
+#' @param chia.obj The ChIA object whose regions must be assessed.
+#' @param min.gene The minimum number of gene in a component for it to be considered
+#'   a gene network.
+#'
+#' @return A logical vector indicating whcih regiosn are part of a gene network.
+#' @export
+regions.in.gene.network <- function(chia.obj, min.gene=2) {
+    stopifnot(has.components(chia.obj))
+    
+    component.summary = aggregate(chia.obj$Regions$Gene.Representative, 
+                                  by=list(Component=chia.obj$Regions$Component.Id),
+                                  FUN=sum)
+    return(chia.obj$Regions$Component.Id %in% component.summary$Component[component.summary$x >= min.gene])
+}

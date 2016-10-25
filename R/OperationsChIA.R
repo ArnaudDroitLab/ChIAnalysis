@@ -382,3 +382,15 @@ process.chia.pet <- function(input.chia, chia.param, output.dir="output", verbos
     # Return teh created object.
 	return(chia.obj)
 }
+
+#' Returns a subset of a ChIA object containing only components classified as gene networks.
+#'
+#' @param chia.obj The ChIA object whose regions must be assessed.
+#' @param min.gene The minimum number of gene in a component for it to be considered
+#'   a gene network.
+#'
+#' @return A subsetted chia object containing only the gene networks.
+#' @export
+select.gene.networks <- function(chia.obj, min.gene=2) {
+    return(chia.vertex.subset(chia.obj, regions.in.gene.network(chia.obj, min.gene)))
+}
