@@ -275,29 +275,28 @@ analyze.generic.topology <- function(chia.obj, output.dir="output") {
 #'
 #' @export
 analyze.central.nodes <- function(chia.obj, output.dir=".") {
-  centrality.categories <- NULL
   if(has.centrality(chia.obj)) {
     centrality.categories <- categorize.by.centrality(chia.obj)
-  }
   
-  if(has.chrom.state(chia.obj)) {
-    chia.plot.metrics(chia.obj, level.counts, centrality.categories, graph.type = "heatmap",
-                 file.out = file.path(output.dir, "Heatmap of centrality vs chromatin states.pdf"), variable.name = "Chrom.State")
-  }
-  
-  if(has.gene.annotation(chia.obj)) {
-    chia.plot.metrics(chia.obj, level.counts, centrality.categories, graph.type = "heatmap",
-                 file.out = file.path(output.dir, "Heatmap of centrality vs genomic locations.pdf"), variable.name = "Simple.annotation")
-  }
-  
-  if(has.transcription.factors(chia.obj)) {
-    results = chia.plot.metrics(chia.obj, calculate.tf.presence, centrality.categories, graph.type = "heatmap",
-      x.lab = "Centrality category", y.lab = "Proportion", 
-      file.out = file.path(output.dir, "Proportion of TF as a function of centrality.pdf"),
-      proportion = TRUE)
+    if(has.chrom.state(chia.obj)) {
+      chia.plot.metrics(chia.obj, level.counts, centrality.categories, graph.type = "heatmap",
+                   file.out = file.path(output.dir, "Heatmap of centrality vs chromatin states.pdf"), variable.name = "Chrom.State")
+    }
     
-      write.table(results$Metrics, file=file.path(output.dir, "Proportion of TF as a function of centrality.txt"), 
-                  sep="\t", row.names=FALSE, col.names=TRUE)
+    if(has.gene.annotation(chia.obj)) {
+      chia.plot.metrics(chia.obj, level.counts, centrality.categories, graph.type = "heatmap",
+                   file.out = file.path(output.dir, "Heatmap of centrality vs genomic locations.pdf"), variable.name = "Simple.annotation")
+    }
+    
+    if(has.transcription.factors(chia.obj)) {
+      results = chia.plot.metrics(chia.obj, calculate.tf.presence, centrality.categories, graph.type = "heatmap",
+        x.lab = "Centrality category", y.lab = "Proportion", 
+        file.out = file.path(output.dir, "Proportion of TF as a function of centrality.pdf"),
+        proportion = TRUE)
+      
+        write.table(results$Metrics, file=file.path(output.dir, "Proportion of TF as a function of centrality.txt"), 
+                    sep="\t", row.names=FALSE, col.names=TRUE)
+    }
   }
 }
 

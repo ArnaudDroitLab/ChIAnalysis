@@ -25,7 +25,7 @@ contact.heatmap <- function(chia.obj, variable.name, label, output.dir) {
     }
   }
 
-  results.df = melt(results.matrix)
+  results.df = melt(results.matrix, varnames=c("Var1", "Var2"))
   results.df = results.df[!is.na(results.df$value),]
 
   results.df$Var1 = factor(results.df$Var1, levels = rev(var.levels))
