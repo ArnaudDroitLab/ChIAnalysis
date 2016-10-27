@@ -160,6 +160,32 @@ associate.gene <- function(regions, expression.data=NULL) {
   return(regions)
 }
 
+#' Associate named regions to a ChIA-PET object.
+#'
+#' @param The ChIA-PET object to annotate.
+#' @param annotation.regions A \linkS4class{GRanges} object with the named 
+#'   regions to be used for annotation.
+#' @param annotation.name The name to be given to the new column within the 
+#'   ChIA-PET object's annotations.
+#'
+#' @return The ChIA-PET object, with added annotations.
+#' @importFrom GenomicRanges findOverlaps
+#' @export
+associate.regions.by.name <- function(chia.obj, annotation.regions, annotation.name) {
+  # If no name are provided, generate some.
+  if(is.null(annotation.regions$name)) {
+    annotation.regions$name = paste0(seqnames(annotation.regions), ":", start(annotation.regions), "-", end(annotation.regions))
+  }
+  
+  # Find the first overlapping region.
+  overlap.indices = findOverlaps(get.granges(chia.obj), annotation.regions, select="first")
+  
+  # Associate the region names to the chia object.
+  chia.obj$Regions[[annotation.name]] = annotation.regions$name[overlap.indices]
+  
+  return(chia.obj)
+}
+
 #' Adds gene-specific annotations to chia.obj.
 #'
 #' Given a data frame where the first column are gene symbols, and the second column
@@ -251,6 +277,14 @@ annotate.chia <- function(chia.obj, chia.param, output.dir=".", verbose=TRUE, sk
   tmp = associate.gene(get.granges(chia.obj), chia.param$expression.data)
   chia.obj$Regions = as.data.frame(tmp)
 
+  if(!is.null(chia.params$tad.regions)) {
+    chia.obj = associate.regions.by.name(chia.obj, chia.params$tad.regions, "TAD")
+  }
+  
+  if(!is.null(chia.params$compartments.regions)) {
+    chia.obj = associate.regions.by.name(chia.obj, chia.params$compartments.regions, "Compartment")
+  }
+  
   # Associate tissue specificity and fitness scores if the organism allows it.
   if(chia.param$genome.build=="hg19" || chia.param$genome.build=="hg38") {
     cat(date(), " : Associating tissue specificity...\n",cat.sink)

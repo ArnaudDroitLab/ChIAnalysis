@@ -11,8 +11,9 @@
 #' @return An environment that can be passed to process.chia.pet, annotate.chia.pet or analyze.chia.pet.
 #' @export
 build.chia.params <- function(input.chrom.state = NULL, biosample = NULL, genome.build = NULL, tf.regions = NULL,
-                             histone.regions = NULL, pol.regions = NULL, expression.data = NULL, tssRegion = c(-3000, 3000),
-                             centrality.measures=c("Degree"), weight.attr=NULL) {
+                             histone.regions = NULL, pol.regions = NULL, expression.data = NULL, tad.regions = NULL,
+                             compartments.regions = NULL, tssRegion = c(-3000, 3000), centrality.measures=c("Degree"),
+                             weight.attr=NULL) {
     chia.params = new.env()
     
     chia.params$biosample = biosample
@@ -23,7 +24,9 @@ build.chia.params <- function(input.chrom.state = NULL, biosample = NULL, genome
     chia.params$histone.regions = histone.regions
     chia.params$pol.regions = pol.regions
     chia.params$expression.data = expression.data
-
+    chia.params$tad.regions = tad.regions
+    chia.params$compartments.regions = compartments.regions
+    
     chia.params$tssRegion = tssRegion
     chia.params$centrality.measures = centrality.measures
     chia.params$weight.attr = weight.attr
