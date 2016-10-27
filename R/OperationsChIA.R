@@ -5,7 +5,7 @@
 #' @return A subset of chia.obj containing only nodes which are gene representatives.
 #' @export
 select.gene.representative <- function(chia.obj) {
-    return(chia.vertex.subset(chia.obj, chia.obj$Regions$Gene.Representative))
+    return(chia.vertex.subset(chia.obj, is.gene.representative(chia.obj)))
 }                   
 
 #' Select all nodes which are central.
@@ -64,6 +64,18 @@ select.by.component.functor <- function(component.ids) {
     function(chia.obj) {
         return(select.by.components(chia.obj, component.ids))
     }
+}
+
+#' Select all nodes in the components where the given genes are found.
+#'
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param genenames A vector fo gene names whose components should be selected.
+#'
+#' @return A subset fo chia.obj containing only the components of the given genes.
+#' @export   
+select.gene.component <- function(chia.obj, genenames) {
+    component.ids = get.gene.annotation(chia.obj, genenames)$Component.Id
+    return(select.by.components(chia.obj, component.ids))
 }
 
 regions.to.vertex.attr <- function(chia.obj) {

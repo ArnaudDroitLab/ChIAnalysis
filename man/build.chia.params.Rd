@@ -7,8 +7,8 @@
 build.chia.params(input.chrom.state = NULL, biosample = NULL,
   genome.build = NULL, tf.regions = NULL, histone.regions = NULL,
   pol.regions = NULL, expression.data = NULL, tad.regions = NULL,
-  tssRegion = c(-3000, 3000), centrality.measures = c("Degree"),
-  weight.attr = NULL)
+  compartments.regions = NULL, tssRegion = c(-3000, 3000),
+  centrality.measures = c("Degree"), weight.attr = NULL)
 }
 \arguments{
 \item{input.chrom.state}{The name of the file containing the information about chromatin states.}

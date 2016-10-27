@@ -2,7 +2,7 @@
 % Please edit documentation in R/AccessorsChIA.R
 \name{regions.in.gene.network}
 \alias{regions.in.gene.network}
-\title{Determiens which regions of a ChIA object are part of gene networks.}
+\title{Determines which regions of a ChIA object are part of gene networks.}
 \usage{
 regions.in.gene.network(chia.obj, min.gene = 2)
 }
@@ -16,6 +16,6 @@ a gene network.}
 A logical vector indicating whcih regiosn are part of a gene network.
 }
 \description{
-Determiens which regions of a ChIA object are part of gene networks.
+Determines which regions of a ChIA object are part of gene networks.
 }
 

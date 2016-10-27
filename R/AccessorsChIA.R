@@ -352,7 +352,7 @@ summarize.distances <- function(chia.obj, from, to, max=3, values=FALSE) {
   }
 }
 
-#' Determiens which regions of a ChIA object are part of gene networks.
+#' Determines which regions of a ChIA object are part of gene networks.
 #'
 #' @param chia.obj The ChIA object whose regions must be assessed.
 #' @param min.gene The minimum number of gene in a component for it to be considered
@@ -367,4 +367,25 @@ regions.in.gene.network <- function(chia.obj, min.gene=2) {
                                   by=list(Component=chia.obj$Regions$Component.Id),
                                   FUN=sum)
     return(chia.obj$Regions$Component.Id %in% component.summary$Component[component.summary$x >= min.gene])
+}
+
+#' Returns a logical vector indicating which nodes are gene representatives.
+#'
+#' @param chia.obj The ChIA object whose regions must be assessed.
+#'
+#' @return A logical vector indicating which nodes are gene representatives.
+#' @export
+is.gene.representative <- function(chia.obj) {
+    return(chia.obj$Regions$Gene.Representative)
+}
+
+#' Returns the region annotations for the representative regions for the given genes.
+#'
+#' @param chia.obj The ChIA object whose regions must be assessed.
+#' @param genenames The genes whose representative annotation must be returned.
+#'
+#' @return A data-frame containign the annotation for the selected genes.
+#' @export
+get.gene.annotation <- function(chia.obj, genenames) {
+    return(chia.obj$Regions[is.gene.representative(chia.obj) & chia.obj$Regions$SYMBOL %in% genenames,])
 }
