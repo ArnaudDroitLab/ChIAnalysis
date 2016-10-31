@@ -406,3 +406,16 @@ process.chia.pet <- function(input.chia, chia.param, output.dir="output", verbos
 select.gene.networks <- function(chia.obj, min.gene=2) {
     return(chia.vertex.subset(chia.obj, regions.in.gene.network(chia.obj, min.gene)))
 }
+
+#' Returns a subset of a ChIA object containing only nodes with the specified 
+#' transcription factors.
+#'
+#' @param chia.obj The ChIA object whose regions must be assessed.
+#' @param tf.names The transcription factors whose regions must be returned.
+#'
+#' @return A subset of the ChIA object containing only nodes with the specified 
+#'   transcription factors.
+#' @export
+select.by.tf <- function(chia.obj, tf.names) {
+    chia.vertex.subset(chia.obj, nodes.with.tf(chia.obj, tf.names))
+}
