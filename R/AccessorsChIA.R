@@ -4,6 +4,7 @@
 #'
 #' @return A \linkS4class{GRanges} object with the \code{Regions} from the "\code{chia.obj}" parameter corresponding the the "left side".
 #' of the original data.
+#' @export
 chia.left <- function(chia.obj) {
     return(chia.obj$Regions[as_edgelist(chia.obj$Graph)[,1],])
 }
@@ -14,6 +15,7 @@ chia.left <- function(chia.obj) {
 #'
 #' @return A \linkS4class{GRanges} object with the \code{Regions} from the "\code{chia.obj}" parameter corresponding the the "right side".
 #' of the original data.
+#' @export
 chia.right <- function(chia.obj) {
     return(chia.obj$Regions[as_edgelist(chia.obj$Graph)[,2],])
 }
