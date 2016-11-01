@@ -8,7 +8,8 @@
 #' @return The matrix used to create the heatmap.
 #'
 #' @importFrom reshape2 melt
-contact.heatmap <- function(chia.obj, variable.name, label, output.dir) {
+#' @export
+contact.heatmap <- function(chia.obj, variable.name, label, output.dir, log.scale=FALSE) {
   type.df = data.frame(Left=chia.left(chia.obj)[,variable.name],
                        Right=chia.right(chia.obj)[,variable.name],
                        stringsAsFactors=FALSE)
@@ -25,12 +26,20 @@ contact.heatmap <- function(chia.obj, variable.name, label, output.dir) {
     }
   }
 
+  scale.name = "No of contacts"
+  if(log.scale) {
+    results.matrix = log10(results.matrix+1)
+    scale.name = "log10(No of contacts)"
+  }
+  
   results.df = melt(results.matrix, varnames=c("Var1", "Var2"))
   results.df = results.df[!is.na(results.df$value),]
 
   results.df$Var1 = factor(results.df$Var1, levels = rev(var.levels))
   ggplot(results.df, aes(y=Var1, x=Var2, fill=value)) +
-    geom_tile() +
+    geom_tile(color="black") +
+    scale_fill_gradient(low="white", high="Blue", name=scale.name) +
+    labs(x=NULL, y=NULL) +
     theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.key.size = unit(1, "cm"))
   ggsave(file.path(output.dir, paste0("Contact heatmap for ", label, ".pdf")))
 
