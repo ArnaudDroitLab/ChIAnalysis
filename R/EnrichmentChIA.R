@@ -73,10 +73,9 @@ tf.enrichment <- function(chia.obj, draw.function) {
   results = list()
   
   # Loop over all transcription factors, calculating enrichment for each.
-  all.tf = colnames(get.tf(chia.obj))
-  for(tf in all.tf) {
+  for(tf in get.tf.names(chia.obj)) {
       # Define a function for selecting the nodes bearing that factor.
-      tf.select = function(x) {return(chia.vertex.subset(x, x$Regions[[tf]] > 0)) }
+      tf.select = function(x) {return(select.by.tf(x, tf))}
       
       # Perform enrichment of the TF.
       results[[tf]] = node.enrichment(chia.obj, tf.select, draw.function)
@@ -85,7 +84,6 @@ tf.enrichment <- function(chia.obj, draw.function) {
   # Combine the results into a data-frame, and rename it appropriately.
   retval = do.call(rbind.data.frame, results)
   colnames(retval) <- names(results[[1]])
-  rownames(retval) <- gsub("TF.overlap.", "", rownames(retval))
 
   return(retval)
 }

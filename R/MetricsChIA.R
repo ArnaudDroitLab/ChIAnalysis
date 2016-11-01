@@ -170,38 +170,15 @@ subset.counts <- function(chia.subset, all.conditions, proportion = TRUE) {
   return(count)
 }
 
-#' Finds which transcription factors are present
+#' Calculates which number/proportion of nodes harbor each transcription factor.
 #'
-#' @param chia.subset A list containing a graph and ChIA-PET regions, as returned by \code{\link{chia.vertex.subset}}.
-#' @param number Should the number of overlap be counted?
-#' @return A named vector with the presence or absence of each transcription factor.
+#' @param chia.obj The chia.obj whose network must be analyzed.
+#' @param proportion Should the proportion be returned instead of the number of regions?
+#' @return A number/proportion of regions occupied by each transcription factor.
 #' @export
-TF.presence <- function(chia.subset, number = FALSE) {
-  # Convert data into data frame
-  variable.data <- mcols(chia.subset$Regions)
-  # Extract the columns woth TF overlaps
-  columns <- grep("TF.overlap.", colnames(variable.data))
-  # Extract the names of these columns
-  names <- sub("TF.overlap.", "", colnames(variable.data)[columns])
-  # For each factor, counts the number of nodes overlapping
-  presence <- vector()
-  for (col in columns) {
-    presence <- c(presence, sum(variable.data[,col] > 0))
-  }
-  # If only the presence is to consider, attribute the value "1" if the TF is present, "0" if absent
-  if (!number) {
-    presence <- ifelse(presence > 0, 1, 0)
-  }
-  # Add names
-  names(presence) <- names
-  return(presence)
-}
-
 calculate.tf.presence <- function(chia.obj, proportion=TRUE) {
-    # Get the count of regions where the TF is present, and rename the output vector
-    # to remove the TF.overlap. prefix.
+    # Get the count of regions where the TF is present.
     results = apply(as.matrix(get.tf(chia.obj)) > 0, 2, sum)
-    names(results) = gsub("TF.overlap.", "", names(results))
     
     # If we're calculating proportions, divide by the total number of regions.
     if(proportion) {

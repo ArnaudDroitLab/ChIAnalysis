@@ -236,7 +236,9 @@ proportion.active.genes <- function(chia.obj) {
 #' @export
 get.tf <- function(chia.obj) {
     stopifnot(has.transcription.factors(chia.obj))
-    return(chia.obj$Regions[,grepl("TF", colnames(chia.obj$Regions))])
+    retval = chia.obj$Regions[,grepl("TF", colnames(chia.obj$Regions))]
+    colnames(retval) = get.tf.names(chia.obj)
+    return(retval)
 }
 
 #' Obtain the name of transcription factors for which annotation is available.
@@ -264,6 +266,10 @@ nodes.with.tf <- function(chia.obj, tf.names, how.many=length(tf.names)) {
     return(numbers >= how.many)
 }
 
+get.pol <- function(chia.obj) {
+    stopifnot(has.transcription.factors(chia.obj))
+}
+
 #' Obtain the number of TFs from a given list that bind all regions within a ChIA-PET object.
 #'
 #' @param chia.obj A ChIA-PET object.
@@ -278,12 +284,10 @@ number.of.tfs <- function(chia.obj, tf.names) {
     results = rep(0, nrow(tf.data))
     
     for(tf in tf.names) {
-        tf.colname = paste0("TF.overlap.", tf)
-        
-        if(!any(colnames(tf.data)==tf.colname)) {
+        if(!any(colnames(tf.data)==tf)) {
             warning(paste0("No information for TF ", tf, " found.\n"))
         } else {
-            results = results + ifelse(tf.data[,tf.colname] > 0, 1, 0)
+            results = results + ifelse(tf.data[,tf] > 0, 1, 0)
         }
     }
     
