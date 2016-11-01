@@ -36,6 +36,7 @@ contact.heatmap <- function(chia.obj, variable.name, label, output.dir, log.scal
   results.df = results.df[!is.na(results.df$value),]
 
   results.df$Var1 = factor(results.df$Var1, levels = rev(var.levels))
+  results.df$Var2 = factor(results.df$Var2, levels = var.levels)
   ggplot(results.df, aes(y=Var1, x=Var2, fill=value)) +
     geom_tile(color="black") +
     scale_fill_gradient(low="white", high="Blue", name=scale.name) +
