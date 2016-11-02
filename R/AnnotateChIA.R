@@ -8,7 +8,7 @@
 #'
 #' @export
 #' @return The annotated chia.obj.
-associate.centralities <- function(chia.obj, which.measures=c("Degree", "Betweenness", "Eigenvector"), weight.attr=NULL) {
+associate.centralities <- function(chia.obj, which.measures=c("Degree", "Betweenness", "Eigenvector", "Closeness"), weight.attr=NULL) {
   centralities = calculate.centralities(chia.obj, which.measures, weight.attr)
   chia.obj$Regions <- cbind(chia.obj$Regions, centralities)
 
@@ -25,7 +25,7 @@ associate.centralities <- function(chia.obj, which.measures=c("Degree", "Between
 #'
 #' @return A data-frame containing the centrality scores and markers for all vertices in the graph.
 #' @export
-calculate.centralities <- function(chia.obj, which.measures=c("Degree", "Betweenness", "Eigenvector"), weight.attr=NULL) {
+calculate.centralities <- function(chia.obj, which.measures=c("Degree", "Betweenness", "Eigenvector", "Closeness"), weight.attr=NULL) {
   # If weights should be used, set them as the weight edge attribute.
   if(!is.null(weight.attr)) {
     stopifnot(weight.attr %in% names(edge_attr(chia.obj$Graph)))
@@ -61,6 +61,10 @@ calculate.centralities <- function(chia.obj, which.measures=c("Degree", "Between
       measures[["Eigenvector"]] = eigen_centrality(component.subgraph, directed = FALSE)$vector
     }
 
+    if("Closeness" %in% which.measures) {
+      measures[["Closeness"]] = estimate_closeness(component.subgraph, cutoff = 3)
+    }    
+    
     # Make sure we had at least one valid measure.
     stopifnot(length(measures) > 0)
 
@@ -261,15 +265,17 @@ annotate.chia <- function(chia.obj, chia.param, output.dir=".", verbose=TRUE, sk
   # Associate histone marks
   if(!is.null(chia.param$histone.regions)) {
     cat(date(), " : Associating histone marks...\n",cat.sink)
-    tmp = associate.histone.marks(get.granges(chia.obj), chia.param$histone.regions)
-    chia.obj$Regions = as.data.frame(tmp)
+    hist.matrix = region.overlap(get.granges(chia.obj), chia.param$histone.regions)
+    colnames(hist.matrix) = paste0("HIST.", colnames(hist.matrix))
+    chia.obj$Regions = cbind(chia.obj$Regions, hist.matrix)
   }
 
   # Associate known polymerase binding
   if(!is.null(chia.param$pol.regions)) {
     cat(date(), " : Associating polymerase II regions...\n",cat.sink)
-    tmp = associate.histone.marks(get.granges(chia.obj), chia.param$pol.regions)    
-    chia.obj$Regions = as.data.frame(tmp)
+    pol.matrix = region.overlap(get.granges(chia.obj), chia.param$pol.regions)
+    colnames(pol.matrix) = paste0("POL.", colnames(pol.matrix))
+    chia.obj$Regions = cbind(chia.obj$Regions, pol.matrix)
   }
 
   # Associate genes to regions

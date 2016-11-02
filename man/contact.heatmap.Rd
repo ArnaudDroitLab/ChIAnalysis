@@ -4,7 +4,7 @@
 \alias{contact.heatmap}
 \title{Create a heatmap by connectivity group.}
 \usage{
-contact.heatmap(chia.obj, variable.name, label, output.dir)
+contact.heatmap(chia.obj, variable.name, label, output.dir, log.scale = FALSE)
 }
 \arguments{
 \item{chia.obj}{A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.}

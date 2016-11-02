@@ -124,6 +124,26 @@ has.transcription.factors <- function(chia.obj) {
     return(sum(grepl("^TF", colnames(chia.obj$Regions))) > 0)
 }
 
+#' Determines if the given chia.obj has polymerase binding information.
+#'
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#'
+#' @return True if the object has polymerase binding information.
+#' @export
+has.polymerases <- function(chia.obj) {
+    return(sum(grepl("^POL", colnames(chia.obj$Regions))) > 0)
+}
+
+#' Determines if the given chia.obj has histone marks binding information.
+#'
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#'
+#' @return True if the object has histone marks binding information.
+#' @export
+has.histone.marks <- function(chia.obj) {
+    return(sum(grepl("^HIST", colnames(chia.obj$Regions))) > 0)
+}
+
 #' Determines if the given chia.obj has TF binding information.
 #'
 #' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
@@ -236,7 +256,7 @@ proportion.active.genes <- function(chia.obj) {
 #' @export
 get.tf <- function(chia.obj) {
     stopifnot(has.transcription.factors(chia.obj))
-    retval = chia.obj$Regions[,grepl("TF", colnames(chia.obj$Regions))]
+    retval = chia.obj$Regions[,grepl("^TF", colnames(chia.obj$Regions))]
     colnames(retval) = get.tf.names(chia.obj)
     return(retval)
 }
@@ -249,8 +269,93 @@ get.tf <- function(chia.obj) {
 #' @export
 get.tf.names <- function(chia.obj) {
     stopifnot(has.transcription.factors(chia.obj))
-    return(gsub("TF.overlap.", "", colnames(get.tf(chia.obj))))
+    all.cols = colnames(chia.obj$Regions)
+    tf.cols = all.cols[grepl("^TF", all.cols)]
+    return(gsub("TF.overlap.", "", tf.cols))
 }
+
+#' Obtain the matrix of polymerase binding.
+#'
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#'
+#' @return A matrix indicating which polymerases binds to which regions.
+#' @export
+get.polymerases <- function(chia.obj, overlap.threshold=0) {
+    return(ifelse(get.polymerases.percent(chia.obj) > overlap.threshold, 1, 0))
+}
+
+#' Obtain the matrix of polymerase binding as a percentage of the ChIA regions.
+#'
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#'
+#' @return A matrix indicating which polymerases binds to which regions.
+#' @export
+get.polymerases.percent <- function(chia.obj) {
+    stopifnot(has.polymerases(chia.obj))
+    retval = chia.obj$Regions[,grepl("^POL", colnames(chia.obj$Regions))]
+    colnames(retval) = get.polymerases.names(chia.obj)
+    return(retval)
+}
+
+#' Obtain the names of polymerases for which annotation is available.
+#'
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#'
+#' @return A vector containing the names of the polymerases for which annotation is available.
+#' @export
+get.polymerases.names <- function(chia.obj) {
+    all.cols = colnames(chia.obj$Regions)
+    tf.cols = all.cols[grepl("^POL", all.cols)]
+    return(gsub("^POL.", "", tf.cols))
+}
+
+#' Obtain the matrix of histone marks binding.
+#'
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#'
+#' @return A matrix indicating which histone marks binds to which regions.
+#' @export
+get.histones <- function(chia.obj, overlap.threshold=0) {
+    return(ifelse(get.histones.percent(chia.obj) > overlap.threshold, 1, 0))
+}
+
+#' Obtain the matrix of histone marks binding as a percentage of the ChIA regions..
+#'
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#'
+#' @return A matrix indicating which histone marks binds to which regions.
+#' @export
+get.histones.percent <- function(chia.obj) {
+    stopifnot(has.histone.marks(chia.obj))
+    retval = chia.obj$Regions[,grepl("^HIST", colnames(chia.obj$Regions))]
+    colnames(retval) = get.histones.names(chia.obj)
+    return(retval)
+}
+
+#' Obtain the names of histone marks for which annotation is available.
+#'
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#'
+#' @return A vector containing the names of the histone marks for which annotation is available.
+#' @export
+get.histones.names <- function(chia.obj) {
+    all.cols = colnames(chia.obj$Regions)
+    tf.cols = all.cols[grepl("^HIST", all.cols)]
+    return(gsub("^HIST.", "", tf.cols))
+}
+
+#' Obtain a matrix of all possible epigenetic marks: transcription factors, polymerase-binding
+#' and histone marks.
+#'
+#' Combines the results of get.tf, get.polymerases and get.histones.
+#'
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#'
+#' @return A matrix describing which epigenetic marks appears on which regions.
+get.all.epigenetic.marks <- function(chia.obj, overlap.threshold=0) {
+    return(cbind(get.tf(chia.obj), get.polymerases(chia.obj, overlap.threshold), get.histones(chia.obj, overlap.threshold)))
+}
+
 
 #' Obtain the indices of nodes bearing any or all of a set of transcription factors.
 #'
@@ -267,7 +372,8 @@ nodes.with.tf <- function(chia.obj, tf.names, how.many=length(tf.names)) {
 }
 
 get.pol <- function(chia.obj) {
-    stopifnot(has.transcription.factors(chia.obj))
+    stopifnot(has.polymerase(chia.obj))
+    return
 }
 
 #' Obtain the number of TFs from a given list that bind all regions within a ChIA-PET object.
