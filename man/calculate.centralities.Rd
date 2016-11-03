@@ -5,7 +5,7 @@
 \title{Calculates centralities for all vertices in a graph.}
 \usage{
 calculate.centralities(chia.obj, which.measures = c("Degree", "Betweenness",
-  "Eigenvector"), weight.attr = NULL)
+  "Eigenvector", "Closeness"), weight.attr = NULL)
 }
 \arguments{
 \item{chia.obj}{A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.}

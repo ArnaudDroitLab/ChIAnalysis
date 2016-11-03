@@ -5,7 +5,7 @@
 \title{Associates centrality scores and boolean centrality markers to regions.}
 \usage{
 associate.centralities(chia.obj, which.measures = c("Degree", "Betweenness",
-  "Eigenvector"), weight.attr = NULL)
+  "Eigenvector", "Closeness"), weight.attr = NULL)
 }
 \arguments{
 \item{chia.obj}{ChIA-PET data, as returned by \code{\link{annotate.chia}}.}
