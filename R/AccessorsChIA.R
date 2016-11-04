@@ -363,7 +363,7 @@ get.chips <- function(chia.obj, overlap.threshold=0) {
 #' @return A vector containing the names of the ChIP data sets for which annotation is available.
 #' @export
 get.chips.names <- function(chia.obj) {
-    return(cbind(get.tf.names(chia.obj), get.polymerases.names(chia.obj), get.histones.names(chia.obj)))
+    return(c(get.tf.names(chia.obj), get.polymerases.names(chia.obj), get.histones.names(chia.obj)))
 }
 
 
@@ -403,7 +403,7 @@ nodes.with.polymerase <- function(chia.obj, polymerase.names, how.many=length(po
 #'
 #' @return A logical vector indicating which regions bind the given transcription factor.
 #' @export
-nodes.with.histone <- function(chia.obj, histone.names, how.many=length(tf.names)) {
+nodes.with.histone <- function(chia.obj, histone.names, how.many=length(histone.names)) {
     nodes.with.generic(chia.obj, histone.names, number.of.histones, how.many)
 }
 
@@ -416,7 +416,7 @@ nodes.with.histone <- function(chia.obj, histone.names, how.many=length(tf.names
 #'
 #' @return A logical vector indicating which regions bind the given transcription factor.
 #' @export
-nodes.with.chip <- function(chia.obj, chip.names, how.many=length(tf.names)) {
+nodes.with.chip <- function(chia.obj, chip.names, how.many=length(chip.names)) {
     nodes.with.generic(chia.obj, chip.names, number.of.chips, how.many)
 }
 

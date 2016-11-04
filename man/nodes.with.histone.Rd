@@ -4,7 +4,7 @@
 \alias{nodes.with.histone}
 \title{Obtain the indices of nodes bearing any or all of a set of transcription factors.}
 \usage{
-nodes.with.histone(chia.obj, histone.names, how.many = length(tf.names))
+nodes.with.histone(chia.obj, histone.names, how.many = length(histone.names))
 }
 \arguments{
 \item{chia.obj}{A ChIA-PET object.}
