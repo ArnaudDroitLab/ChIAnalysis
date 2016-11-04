@@ -417,5 +417,48 @@ select.gene.networks <- function(chia.obj, min.gene=2) {
 #'   transcription factors.
 #' @export
 select.by.tf <- function(chia.obj, tf.names) {
-    chia.vertex.subset(chia.obj, nodes.with.tf(chia.obj, tf.names))
+    select.by.chip.generic(chia.obj, tf.names, nodes.with.tf)
+}
+
+#' Returns a subset of a ChIA object containing only nodes with the specified 
+#' transcription factors.
+#'
+#' @param chia.obj The ChIA object whose regions must be assessed.
+#' @param polymerase.names The polymerases whose regions must be returned.
+#'
+#' @return A subset of the ChIA object containing only nodes with the specified 
+#'   polymerases.
+#' @export
+select.by.polymerase <- function(chia.obj, polymerase.names) {
+    select.by.chip.generic(chia.obj, polymerase.names, nodes.with.polymerases)
+}
+
+#' Returns a subset of a ChIA object containing only nodes with the specified 
+#' transcription factors.
+#'
+#' @param chia.obj The ChIA object whose regions must be assessed.
+#' @param histone.names The histone marks whose regions must be returned.
+#'
+#' @return A subset of the ChIA object containing only nodes with the specified 
+#'   histone marks.
+#' @export
+select.by.histone <- function(chia.obj, histone.names) {
+    select.by.chip.generic(chia.obj, tf.names, nodes.with.histones)
+}
+
+#' Returns a subset of a ChIA object containing only nodes with the specified 
+#' transcription factors.
+#'
+#' @param chia.obj The ChIA object whose regions must be assessed.
+#' @param chip.names The ChIP whose regions must be returned.
+#'
+#' @return A subset of the ChIA object containing only nodes with the specified 
+#'   ChIPs.
+#' @export
+select.by.chip <- function(chia.obj, chip.names) {
+    select.by.chip.generic(chia.obj, tf.names, nodes.with.chip)
+}
+
+select.by.chip.generic <- function(chia.obj, chip.names, nodes.with.function) {
+    chia.vertex.subset(chia.obj, nodes.with.function(chia.obj, chip.names))
 }

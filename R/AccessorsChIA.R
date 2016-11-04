@@ -344,7 +344,7 @@ get.histones.names <- function(chia.obj) {
     return(gsub("^HIST.", "", tf.cols))
 }
 
-#' Obtain a matrix of all possible epigenetic marks: transcription factors, polymerase-binding
+#' Obtain a matrix of all possible ChIP data sets: transcription factors, polymerase-binding
 #' and histone marks.
 #'
 #' Combines the results of get.tf, get.polymerases and get.histones.
@@ -352,8 +352,18 @@ get.histones.names <- function(chia.obj) {
 #' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
 #'
 #' @return A matrix describing which epigenetic marks appears on which regions.
-get.all.epigenetic.marks <- function(chia.obj, overlap.threshold=0) {
+get.chips <- function(chia.obj, overlap.threshold=0) {
     return(cbind(get.tf(chia.obj), get.polymerases(chia.obj, overlap.threshold), get.histones(chia.obj, overlap.threshold)))
+}
+
+#' Obtain the names of ChIP data sets for which annotation is available.
+#'
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#'
+#' @return A vector containing the names of the ChIP data sets for which annotation is available.
+#' @export
+get.chips.names <- function(chia.obj) {
+    return(cbind(get.tf.names(chia.obj), get.polymerases.names(chia.obj), get.histones.names(chia.obj)))
 }
 
 
@@ -367,13 +377,52 @@ get.all.epigenetic.marks <- function(chia.obj, overlap.threshold=0) {
 #' @return A logical vector indicating which regions bind the given transcription factor.
 #' @export
 nodes.with.tf <- function(chia.obj, tf.names, how.many=length(tf.names)) {
-    numbers = number.of.tfs(chia.obj, tf.names)
-    return(numbers >= how.many)
+    nodes.with.generic(chia.obj, tf.names, number.of.tfs, how.many)
 }
 
-get.pol <- function(chia.obj) {
-    stopifnot(has.polymerase(chia.obj))
-    return
+#' Obtain the indices of nodes bearing any or all of a set of transcription factors.
+#'
+#' @param chia.obj A ChIA-PET object.
+#' @param tf.names The names of the transcription factor to look for.
+#' @param how.many How many of the selected TFs should be present to return a hit? By default,
+#'    all TFs must be present.
+#'
+#' @return A logical vector indicating which regions bind the given transcription factor.
+#' @export
+nodes.with.polymerase <- function(chia.obj, polymerase.names, how.many=length(polymerase.names)) {
+    nodes.with.generic(chia.obj, polymerase.names, number.of.polymerases, how.many)
+}
+
+
+#' Obtain the indices of nodes bearing any or all of a set of transcription factors.
+#'
+#' @param chia.obj A ChIA-PET object.
+#' @param tf.names The names of the transcription factor to look for.
+#' @param how.many How many of the selected TFs should be present to return a hit? By default,
+#'    all TFs must be present.
+#'
+#' @return A logical vector indicating which regions bind the given transcription factor.
+#' @export
+nodes.with.histone <- function(chia.obj, histone.names, how.many=length(tf.names)) {
+    nodes.with.generic(chia.obj, histone.names, number.of.histones, how.many)
+}
+
+#' Obtain the indices of nodes bearing any or all of a set of transcription factors.
+#'
+#' @param chia.obj A ChIA-PET object.
+#' @param tf.names The names of the transcription factor to look for.
+#' @param how.many How many of the selected TFs should be present to return a hit? By default,
+#'    all TFs must be present.
+#'
+#' @return A logical vector indicating which regions bind the given transcription factor.
+#' @export
+nodes.with.chip <- function(chia.obj, chip.names, how.many=length(tf.names)) {
+    nodes.with.generic(chia.obj, chip.names, number.of.chips, how.many)
+}
+
+nodes.with.generic <- function(chia.obj, object.names, number.function, how.many=length(object.names)) {
+    numbers = number.function(chia.obj, object.names)
+    return(numbers >= how.many)
 }
 
 #' Obtain the number of TFs from a given list that bind all regions within a ChIA-PET object.
@@ -384,12 +433,49 @@ get.pol <- function(chia.obj) {
 #' @return An integer vector containing the number of TF in the list binding each region.
 #' @export
 number.of.tfs <- function(chia.obj, tf.names) {
-    tf.data = get.tf(chia.obj)
+    number.of.generic(chia.obj, tf.names, get.tf)
+}
+
+#' Obtain the number of polymerases from a given list that bind all regions within a ChIA-PET object.
+#'
+#' @param chia.obj A ChIA-PET object.
+#' @param polymerase.names The names of the transcription factor to look for.
+#'
+#' @return An integer vector containing the number of polymerases in the list binding each region.
+#' @export
+number.of.polymerases <- function(chia.obj, polymerase.names) {
+    number.of.generic(chia.obj, polymerase.names, get.polymerases)
+}
+
+#' Obtain the number of histone marks from a given list that bind all regions within a ChIA-PET object.
+#'
+#' @param chia.obj A ChIA-PET object.
+#' @param histone.names The names of the histone marks to look for.
+#'
+#' @return An integer vector containing the number of histone marks in the list binding each region.
+#' @export
+number.of.histones <- function(chia.obj, histone.names) {
+    number.of.generic(chia.obj, histone.names, get.histones)
+}
+
+#' Obtain the number of histone marks from a given list that bind all regions within a ChIA-PET object.
+#'
+#' @param chia.obj A ChIA-PET object.
+#' @param histone.names The names of the histone marks to look for.
+#'
+#' @return An integer vector containing the number of histone marks in the list binding each region.
+#' @export
+number.of.chips <- function(chia.obj, chip.names) {
+    number.of.generic(chia.obj, chip.names, get.chips)
+}
+
+number.of.generic <- function(chia.obj, object.names, get.function) {
+    tf.data = get.function(chia.obj)
     
     # At the beginning, no TFs have been detected.
     results = rep(0, nrow(tf.data))
     
-    for(tf in tf.names) {
+    for(tf in object.names) {
         if(!any(colnames(tf.data)==tf)) {
             warning(paste0("No information for TF ", tf, " found.\n"))
         } else {
