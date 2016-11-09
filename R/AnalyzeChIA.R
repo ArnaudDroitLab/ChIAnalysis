@@ -9,7 +9,7 @@
 #'
 #' @importFrom reshape2 melt
 #' @export
-contact.heatmap <- function(chia.obj, variable.name, label, output.dir, log.scale=FALSE) {
+contact.heatmap <- function(chia.obj, variable.name, label, output.dir, log.scale=FALSE, proportions=FALSE, show.labels=FALSE) {
   type.df = data.frame(Left=chia.left(chia.obj)[,variable.name],
                        Right=chia.right(chia.obj)[,variable.name],
                        stringsAsFactors=FALSE)
@@ -25,11 +25,15 @@ contact.heatmap <- function(chia.obj, variable.name, label, output.dir, log.scal
       results.matrix[i, j] = count
     }
   }
-
-  scale.name = "No of contacts"
+  
+  if(proportions) {
+    results.matrix = results.matrix / nrow(type.df)
+  }
+  
+  scale.name = ifelse(proportions, "Proportion of contacts", "No of contacts")
   if(log.scale) {
     results.matrix = log10(results.matrix+1)
-    scale.name = "log10(No of contacts)"
+    scale.name = paste0("log10(", scale.name, ")")
   }
   
   results.df = melt(results.matrix, varnames=c("Var1", "Var2"))
@@ -37,11 +41,25 @@ contact.heatmap <- function(chia.obj, variable.name, label, output.dir, log.scal
 
   results.df$Var1 = factor(results.df$Var1, levels = rev(var.levels))
   results.df$Var2 = factor(results.df$Var2, levels = var.levels)
-  ggplot(results.df, aes(y=Var1, x=Var2, fill=value)) +
-    geom_tile(color="black") +
-    scale_fill_gradient(low="white", high="Blue", name=scale.name) +
-    labs(x=NULL, y=NULL) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.key.size = unit(1, "cm"))
+  plot.obj = ggplot(results.df, aes(y=Var1, x=Var2, fill=value)) +
+               geom_tile(color="black") +
+               scale_fill_gradient(low="white", high="Blue", name=scale.name) +
+               labs(x=NULL, y=NULL) +
+               theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.key.size = unit(1, "cm"))
+               
+  if(show.labels) {
+    # Can't sue the same albel size for 4 rows as we do for 18.
+    # 2 is a good size for 18 rows, 8 is a good size for 4. Extrapolate
+    # a linear relation from that, and you get:
+    label.size=(-3/7)*length(unique(results.df$Var1))+(68/7)
+    if(proportions) {
+      plot.obj = plot.obj + geom_text(mapping=aes(y=Var1, x=Var2, label=sprintf("%.0f%%", value*100)), size=label.size)
+    } else if(log.scale) {
+      plot.obj = plot.obj + geom_text(mapping=aes(y=Var1, x=Var2, label=round(10^value)), size=label.size)
+    } else {
+      plot.obj = plot.obj + geom_text(mapping=aes(y=Var1, x=Var2, label=value), size=label.size)
+    }
+  }
   ggsave(file.path(output.dir, paste0("Contact heatmap for ", label, ".pdf")))
 
   return(results.matrix)
