@@ -4,7 +4,8 @@
 \alias{analyze.chromatin.states}
 \title{Analyze the chromatin state of ChIA-PET data}
 \usage{
-analyze.chromatin.states(chia.obj, output.dir = "output")
+analyze.chromatin.states(chia.obj, chia.params = NULL,
+  output.dir = "output")
 }
 \arguments{
 \item{chia.obj}{A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}}

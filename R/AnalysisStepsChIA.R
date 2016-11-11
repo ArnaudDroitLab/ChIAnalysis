@@ -12,24 +12,23 @@ analyze.chromatin.states <- function(chia.obj, chia.params=NULL, output.dir="out
     if(!has.chrom.state(chia.obj)) {
         warning("No chromatin states to analyze!")
     } else {
-        # Write proportion of chromatin states/annotation types
+        # Write table of proportions of chromatin states/annotation types
         state.proportions = table(chia.obj$Regions$Chrom.State)/length(chia.obj$Regions)
         write.table(data.frame(State=names(state.proportions), Proportion=as.vector(state.proportions)),
                     file.path(output.dir, "Chromatin states summary.txt"), sep="\t", col.names=TRUE, row.names=FALSE, quote=FALSE)
 
-        # Plot histogram of degrees for each chromatin state
-        degree.per.state.df = data.frame(Chrom.State=chia.obj$Regions$Chrom.State, Degree=chia.obj$Regions$Degree)
-        ggplot(degree.per.state.df, aes(x=Degree)) +
-            geom_histogram() +
-            scale_y_log10() +
-            facet_wrap(~Chrom.State)
-        ggsave(file.path(output.dir, "log Degree histogram per chromatin state.pdf"))
-
+        # Plot proportions of chromatin states as a function of connectivity.
         connectivity.df <- categorize.by.connectivity(chia.obj)
         chia.plot.metrics(chia.obj, level.counts, connectivity.df, "Connectivity", "Proportion of nodes in category",
                      graph.type = "line", facet.rows = 3, facet.cols = 6,
                      file.out = file.path(output.dir, "Proportion of chromatin state as a function of connectivity category.pdf"),
                      variable.name = "Chrom.State")
+        chia.plot.metrics(chia.obj, level.counts, connectivity.df, "Connectivity", "Proportion of nodes in category",
+                     graph.type = "line", facet.rows = 2, facet.cols = 2,
+                     file.out = file.path(output.dir, "Proportion of simple chromatin state as a function of connectivity category.pdf"),
+                     variable.name = "Simple.Chrom.State")
+                     
+        # Generate contact heatmaps.
         contact.heatmap(chia.obj, "Chrom.State", "chromatin states", output.dir=output.dir)
         contact.heatmap(chia.obj, "Simple.Chrom.State", "simple chromatin states", output.dir=output.dir)
         
@@ -356,7 +355,7 @@ analyze.chia.pet <- function(chia.obj, chia.params=NULL, output.dir=".", verbose
     analyze.annotation(chia.obj, output.dir)
 
     cat(date(), " : Analyzing chromatin states...\n",cat.sink)
-    analyze.chromatin.states(chia.obj, output.dir)
+    analyze.chromatin.states(chia.obj, chia.params, file.path.create(output.dir, "Chromatin states"))
 
     cat(date(), " : Analyzing gene expression...\n",cat.sink)
     analyze.expression(chia.obj, output.dir)
@@ -377,4 +376,10 @@ analyze.chia.pet <- function(chia.obj, chia.params=NULL, output.dir=".", verbose
     if(!verbose) {
         close(cat.sink)
     }
+}
+
+file.path.create <- function(...) {
+    retval = file.path(...)
+    dir.create(retval, recursieve=TRUE, showWarnings=FALSE)
+    return(retval)
 }
