@@ -152,20 +152,12 @@ analyze.gene.specificity <- function(chia.obj, output.dir="output") {
                                     data.frame(Degree=degree(chia.obj$Graph),
                                                Tau=chia.obj$Regions$Expression.Tau,
                                                Category=chia.obj$Regions$Expression.Category))
-        tissue.specificity.df$Category = factor(tissue.specificity.df$Category,
-                                                levels=c("Not detected",
-                                                        "Mixed low", "Mixed high",
-                                                        "Moderately tissue enriched", "Highly tissue enriched", "Group enriched",
-                                                        "Expressed in all low", "Expressed in all high"))
-
-        ggplot(tissue.specificity.df, aes(x=Tau, y=log2(Degree))) + geom_point()
-        ggsave(file.path(output.dir, "Tau vs degree.pdf"))
 
         # Plot category vs degree
         ggplot(tissue.specificity.df, aes(x=Category, y=log2(Degree))) +
             geom_boxplot() +
             theme(axis.text.x = element_text(angle = 90, hjust = 1))
-        ggsave(file.path(output.dir, "Boxplot of degrees by expression category.pdf"))
+        ggsave(file.path(output.dir, "Boxplot of connectivity by expression category.pdf"))
     }
 }
 
@@ -392,7 +384,7 @@ analyze.chia.pet <- function(chia.obj, chia.params=NULL, output.dir=".", verbose
     analyze.tf(chia.obj, output.dir)
 
     cat(date(), " : Analyzing gene specificity...\n",cat.sink)
-    analyze.gene.specificity(chia.obj, output.dir)
+    analyze.gene.specificity(chia.obj, file.path.create(output.dir, "Expression"))
 
     cat(date(), " : Analyzing central nodes...\n",cat.sink)
     analyze.central.nodes(chia.obj, output.dir)
