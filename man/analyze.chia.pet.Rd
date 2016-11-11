@@ -4,10 +4,14 @@
 \alias{analyze.chia.pet}
 \title{Performs all possible analysis steps on a ChIA-PET object.}
 \usage{
-analyze.chia.pet(chia.obj, output.dir = ".", verbose = TRUE)
+analyze.chia.pet(chia.obj, chia.params = NULL, output.dir = ".",
+  verbose = TRUE)
 }
 \arguments{
 \item{chia.obj}{A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.}
+
+\item{chia.params}{The chia.params object which was used to annotate this one. Used
+for calculating in-network TF/chromatin state enrichments vs the entire genome.}
 
 \item{output.dir}{The directory where output should be saved.}
 
