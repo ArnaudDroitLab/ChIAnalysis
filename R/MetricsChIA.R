@@ -34,6 +34,8 @@ metric.list.to.df <- function(metric.list) {
     
     # Convert it to data frame for plotting
     metric.df = melt(metric.matrix, varnames=c("Metric", "Category"))  
+    metric.df$Metric = factor(metric.df$Metric, levels=rownames(metric.matrix))
+    metric.df$Category = factor(metric.df$Category, levels=colnames(metric.matrix))
   }
   
   return(metric.df)
