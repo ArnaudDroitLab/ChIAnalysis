@@ -172,30 +172,6 @@ boxplot.per.tf <- function(chip.data, biosample, genome.build, chia.obj, output.
   }
 }
 
-#' Boxplot by connectivity
-#'
-#' Creates a boxplot of a specific value (given as parameter) according to the connectivity
-#'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
-#' @param variable.name The name of the variable according to which the boxplot should be computed.
-#' @param label The Name to give te the variable name in the resulting heatmap.
-#' @param output.dir The name of the directory where to save the heatmaps.
-#'
-#' @export
-boxplot.by.connectivity <- function(chia.obj, variable.name, label, output.dir){
-  data.for.boxplot <- chia.obj$Regions[, c(variable.name, "Degree")]
-  data.for.boxplot$CutDegree <- cut(data.for.boxplot$Degree, breaks = c(1, 2, 6, 21, Inf), right = FALSE,
-                                    labels = c("Singles", "Low", "Intermediate", "High"))
-  data.for.boxplot <- data.for.boxplot[!is.na(data.for.boxplot[,variable.name]),]
-  ggplot(data.for.boxplot) +
-    geom_boxplot(aes(CutDegree, get(variable.name))) +
-    ylab(variable.name) +
-    xlab("Connectivity") +
-    scale_y_log10() +
-    ggtitle(label)
-  ggsave(file.path(output.dir, paste0(label, ".pdf")))
-}
-
 #' Histogram of the proportion of "essential genes", by connectivity categories.
 #'
 #' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{annotate.chia}}.
@@ -283,4 +259,49 @@ chia.plot.network.heatmap <- function(chia.obj, size.limit, variable.name, label
   pdf(file.path(output.dir, paste0("Heatmap of the ", label, " - networks with more than ", size.limit, " nodes no clustering limit 0.3.pdf")), width=7, height=7)
   aheatmap(t(per.component.cs.matrix[order(component.sizes),]), annCol=list("log2(Network size)"=log2(component.sizes)[order(component.sizes)]), Colv=NA, color="-Blues")
   dev.off()
+}
+
+# Compare expression of genes inside and outside of networks.
+genomewide.expression.vs.network <- function(chia.obj, chia.params, output.dir) {
+    annot = select.annotations(chia.params$genome.build)
+    
+    # Get all genes which could have an expression value.
+    txList = as.list(annot$TxDb)
+    all.possible.genes = unique(txList$genes$gene_id)
+    
+    # Get the ENSEMBL ids associated with the Entrez ID
+    ensembl.ids = mapIds(annot$OrgDb, as.character(all.possible.genes), c("ENSEMBL"), "ENTREZID")
+    symbols = mapIds(annot$OrgDb, as.character(all.possible.genes), c("SYMBOL"), "ENTREZID")
+    expression.data = data.frame(Entrez=names(ensembl.ids), ENSEMBL=ensembl.ids, SYMBOL=symbols)
+    
+    # Associate expression data
+    expression.data$FPKM = chia.params$expression.data$FPKM[match(expression.data$ENSEMBL, chia.params$expression.data$ENSEMBL)]
+    
+    # Keep only those with EnsemblIDs and at least SOME expression
+    expression.data = expression.data[!is.na(expression.data$ENSEMBL) & !is.na(expression.data$FPKM) & expression.data$FPKM > 0,]
+    
+    in.chia = expression.data$ENSEMBL %in% chia.obj$Regions$ENSEMBL[chia.obj$Regions$Gene.Representative]
+    in.chia.low.connect = expression.data$ENSEMBL %in% chia.obj$Regions$ENSEMBL[chia.obj$Regions$Gene.Representative & chia.obj$Regions$Degree < 20]
+    in.chia.high.connect = expression.data$ENSEMBL %in% chia.obj$Regions$ENSEMBL[chia.obj$Regions$Gene.Representative & chia.obj$Regions$Degree >= 20]
+    
+    expression.data$In.ChIA = in.chia
+    expression.data$In.ChIA = in.chia.low.connect
+    expression.data$In.ChIA = in.chia.high.connect
+    
+    plot.df = rbind(data.frame(Category="All", FPKM=expression.data$FPKM),
+                    data.frame(Category="Outside of networks", FPKM=expression.data$FPKM[!in.chia]),
+                    data.frame(Category="In networks (all)", FPKM=expression.data$FPKM[in.chia]),
+                    data.frame(Category="In networks (low connectivity)", FPKM=expression.data$FPKM[in.chia.low.connect]),
+                    data.frame(Category="In networks (high connectivity)", FPKM=expression.data$FPKM[in.chia.high.connect]))
+    plot.df$Category = factor(plot.df$Category, levels=c("All", "Outside of networks", "In networks (all)", "In networks (low connectivity)", "In networks (high connectivity)"))
+                    
+    plot.subset = plot.df[plot.df$Category %in% c("Outside of networks", "In networks (all)"),]
+    ggplot(plot.subset, aes(x=Category, y=log2(FPKM))) + geom_boxplot()
+    ggsave(file.path(output.dir, "Expression inside networks vs outside networks.pdf"), width=7, height=7)
+    
+    plot.subset = plot.subset[plot.subset$FPKM >= 1,]
+    ggplot(plot.subset, aes(x=Category, y=log2(FPKM))) + geom_boxplot()
+    ggsave(file.path(output.dir, "Expression of active genes inside networks vs outside networks.pdf"), width=7, height=7)
+    
+    return(plot.df)
 }

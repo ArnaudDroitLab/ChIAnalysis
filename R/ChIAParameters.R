@@ -6,14 +6,14 @@
 #' @param tf.regions A \linkS4class{GRangesList} object containing TF regions.
 #' @param histone.regions A \linkS4class{GRangesList} object containing histone regions.
 #' @param pol.regions A \linkS4class{GRangesList} object containing the pol2 regions.
-#' @param expression.levels A data frame containing the levels of expression of genes, according to their EMSEMBL id.
+#' @param expression.data A data frame containing the levels of expression of genes, according to their EMSEMBL id.
 #'
 #' @return An environment that can be passed to process.chia.pet, annotate.chia.pet or analyze.chia.pet.
 #' @export
 build.chia.params <- function(input.chrom.state = NULL, biosample = NULL, genome.build = NULL, tf.regions = NULL,
                              histone.regions = NULL, pol.regions = NULL, expression.data = NULL, tad.regions = NULL,
                              compartments.regions = NULL, tssRegion = c(-3000, 3000), centrality.measures=c("Degree"),
-                             weight.attr=NULL) {
+                             weight.attr=NULL, simple.chrom.state=NULL, genomic.regions=NULL) {
     chia.params = new.env()
     
     chia.params$biosample = biosample
@@ -31,6 +31,22 @@ build.chia.params <- function(input.chrom.state = NULL, biosample = NULL, genome
     chia.params$centrality.measures = centrality.measures
     chia.params$weight.attr = weight.attr
                
+    # Calculate simplified chromatin states.
+    if(!is.null(input.chrom.state) && 
+        is.null(simple.chrom.state) && 
+        all(input.chrom.state$name %in% names(simple.chrom.state.map())) {
+        simple.chrom.state = input.chrom.state
+        simple.chrom.state$name = simplify.chrom.state(input.chrom.state$name)
+    }
+    chia.params$simple.chrom.state = simple.chrom.state    
+    
+    # Calculate genomic region partition
+    if(is.null(genomic.regions) && !is.null(genome.build)) {
+        annot = select.annotations(genome.build)
+        genomic.regions = partition.genomic.regions(annot$TxDb, input.chrom.state, annot$BSGenome)
+    }
+    chia.params$genomic.regions = genomic.regions
+
     return(chia.params)
 }
 
