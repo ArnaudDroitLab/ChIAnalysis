@@ -4,16 +4,23 @@
 \alias{analyze.annotation}
 \title{Analyze the annotation of ChIA-PET data}
 \usage{
-analyze.annotation(chia.obj, output.dir = "output")
+analyze.annotation(chia.obj, chia.params = NULL, output.dir = "output")
 }
 \arguments{
-\item{chia.obj}{A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}}
+\item{chia.obj}{A list containing the annotated ChIA-PET data, as returned 
+by \code{\link{annotate.chia}}}
+
+\item{chia.params}{Original chia.params used to build chia.obj, used to 
+determine genomic backgrounds.}
 
 \item{output.dir}{The name of the directory where to save the graphs.}
 }
 \description{
 Analyzes ChIA-PET data and produces graphs according to the annotation: \describe{
-\item{Proportion of genomic location as a function of connectivity category.pdf}{A plot of the proportion of the genomic location of the regions as a fonction of connectivity category.}
-\item{Contact heatmap for genomic location.pdf}{A contact heatmap of the genomic location of the regions.}}
+\item{Proportion of genomic location as a function of connectivity category.pdf}
+     {A plot of the proportion of the genomic location of the regions as a 
+      fonction of connectivity category.}
+\item{Contact heatmap for genomic location.pdf}
+     {A contact heatmap of the genomic location of the regions.}}
 }
 

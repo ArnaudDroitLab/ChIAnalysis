@@ -366,7 +366,7 @@ analyze.chia.pet <- function(chia.obj, chia.params=NULL, output.dir=".", verbose
 
     # Perform further in-depth analysis of the networks.
     cat(date(), " : Analyzing network topologies...\n",cat.sink)
-    analyze.generic.topology(chia.obj, output.dir)
+    analyze.generic.topology(chia.obj,  file.path.create(output.dir, "Topology"))
 
     cat(date(), " : Analyzing network components...\n",cat.sink)
     analyze.components(chia.obj, output.dir)
@@ -400,6 +400,6 @@ analyze.chia.pet <- function(chia.obj, chia.params=NULL, output.dir=".", verbose
 
 file.path.create <- function(...) {
     retval = file.path(...)
-    dir.create(retval, recursieve=TRUE, showWarnings=FALSE)
+    dir.create(retval, recursive=TRUE, showWarnings=FALSE)
     return(retval)
 }

@@ -4,7 +4,7 @@
 \alias{analyze.expression}
 \title{Analyze the expression of ChIA-PET data}
 \usage{
-analyze.expression(chia.obj, output.dir = "output")
+analyze.expression(chia.obj, chia.params = NULL, output.dir = "output")
 }
 \arguments{
 \item{chia.obj}{A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.}

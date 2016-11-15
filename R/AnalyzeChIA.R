@@ -266,8 +266,7 @@ genomewide.expression.vs.network <- function(chia.obj, chia.params, output.dir) 
     annot = select.annotations(chia.params$genome.build)
     
     # Get all genes which could have an expression value.
-    txList = as.list(annot$TxDb)
-    all.possible.genes = unique(txList$genes$gene_id)
+    all.possible.genes = AnnotationDbi::keys(annot$TxDb, "GENEID")
     
     # Get the ENSEMBL ids associated with the Entrez ID
     ensembl.ids = mapIds(annot$OrgDb, as.character(all.possible.genes), c("ENSEMBL"), "ENTREZID")

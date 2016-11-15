@@ -8,15 +8,21 @@ analyze.chromatin.states(chia.obj, chia.params = NULL,
   output.dir = "output")
 }
 \arguments{
-\item{chia.obj}{A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}}
+\item{chia.obj}{A list containing the annotated ChIA-PET data, as returned
+by \code{\link{annotate.chia}}}
+
+\item{chia.params}{Original chia.params used to build chia.obj, used to 
+determine genomic backgrounds.}
 
 \item{output.dir}{The name of the directory where to save the graphs.}
 }
 \description{
 Analyzes ChIA-PET data and produces graphs according to its chromatin states: \describe{
 \item{Chromatin states summary.txt}{A file with the summary of chromatin states.}
-\item{log Degree histogram per chromatin state.pdf}{A histogram of the degree of each node according to the chromatin state.}
-\item{Proportion of chromatin state as a function of connectivity category.pdf}{A plot of the proportion of chromatin state as a fonction of connectivity category.}
+\item{log Degree histogram per chromatin state.pdf}
+     {A histogram of the degree of each node according to the chromatin state.}
+\item{Proportion of chromatin state as a function of connectivity category.pdf}
+     {A plot of the proportion of chromatin state as a fonction of connectivity category.}
 \item{Contact heatmap for chromatin states.pdf}{A contact heatmap of chromatin states.}}
 }
 

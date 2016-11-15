@@ -197,11 +197,12 @@ output.annotated.chia <- function(chia.obj, output.dir="output") {
 
 
   # Export networks in csv files
-  dir.create(file.path(output.dir, "Size between 3 and 5 nodes (incl)"), recursive = TRUE, showWarnings=FALSE)
-  dir.create(file.path(output.dir, "Size between 6 and 20 nodes (incl)"), recursive = TRUE, showWarnings=FALSE)
-  dir.create(file.path(output.dir, "Size between 21 and 50 nodes (incl)"), recursive = TRUE, showWarnings=FALSE)
-  dir.create(file.path(output.dir, "Size between 51 and 100 nodes (incl)"), recursive = TRUE, showWarnings=FALSE)
-  dir.create(file.path(output.dir,"Size over 100 nodes"), recursive = TRUE, showWarnings=FALSE)
+  cyto.dir = file.path(output.dir, "Cytoscape networks")
+  dir.create(file.path(cyto.dir, "Size between 3 and 5 nodes (incl)"), recursive = TRUE, showWarnings=FALSE)
+  dir.create(file.path(cyto.dir, "Size between 6 and 20 nodes (incl)"), recursive = TRUE, showWarnings=FALSE)
+  dir.create(file.path(cyto.dir, "Size between 21 and 50 nodes (incl)"), recursive = TRUE, showWarnings=FALSE)
+  dir.create(file.path(cyto.dir, "Size between 51 and 100 nodes (incl)"), recursive = TRUE, showWarnings=FALSE)
+  dir.create(file.path(cyto.dir,"Size over 100 nodes"), recursive = TRUE, showWarnings=FALSE)
 
   for (i in unique(ids$Component)){
     network <- ids[ids$Component == i,]
@@ -219,7 +220,7 @@ output.annotated.chia <- function(chia.obj, output.dir="output") {
         dir <- "Size over 100 nodes"
       }
       write.table(network[1:3],
-                  file = file.path(output.dir, dir, paste0("Create network for components ", i, "(", size, " nodes)", ".csv")),
+                  file = file.path(cyto.dir, dir, paste0("Create network for components ", i, "(", size, " nodes)", ".csv")),
                   sep = ",", row.names = FALSE)
     }
   }

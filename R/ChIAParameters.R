@@ -32,13 +32,7 @@ build.chia.params <- function(input.chrom.state = NULL, biosample = NULL, genome
     chia.params$weight.attr = weight.attr
                
     # Calculate simplified chromatin states.
-    if(!is.null(input.chrom.state) && 
-        is.null(simple.chrom.state) && 
-        all(input.chrom.state$name %in% names(simple.chrom.state.map())) {
-        simple.chrom.state = input.chrom.state
-        simple.chrom.state$name = simplify.chrom.state(input.chrom.state$name)
-    }
-    chia.params$simple.chrom.state = simple.chrom.state    
+    chia.params = simplify.param.chrom.states(chia.params)
     
     # Calculate genomic region partition
     if(is.null(genomic.regions) && !is.null(genome.build)) {
@@ -87,8 +81,26 @@ add.encode.data <- function(chia.params) {
         # Download chromatin states
         if (is.null(chia.params$input.chrom.state) && genome.build=="hg19") {
             chia.params$input.chrom.state <- download.chromatin.states(biosample, genome.build)
+            chia.params = simplify.param.chrom.states(chia.params)
         }
     }
     
     return(chia.params)
+}
+
+simplify.param.chrom.states <- function(chia.params) {
+    # Make sure we have full chromatin states, and no simplified chromatin states already assigned.
+    if(is.null(chia.params$simple.chrom.state) && !is.null(chia.params$input.chrom.state)) {
+        # Make sure that chromatin states map the types for our mapping.
+        if(all(chia.params$input.chrom.state$name %in% names(simple.chrom.state.map()))) {
+            # Calculate simplified states and assign them.
+            simple.chrom.state = chia.params$input.chrom.state
+            simple.chrom.state$name = simplify.chrom.state(simple.chrom.state$name)
+            chia.params$simple.chrom.state = simple.chrom.state
+        }
+    }
+    
+    # Return the modified chia.params (Useless since it's an environment, 
+    # but useful if we change it back to a list.)
+    chia.params
 }

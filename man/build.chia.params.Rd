@@ -8,7 +8,8 @@ build.chia.params(input.chrom.state = NULL, biosample = NULL,
   genome.build = NULL, tf.regions = NULL, histone.regions = NULL,
   pol.regions = NULL, expression.data = NULL, tad.regions = NULL,
   compartments.regions = NULL, tssRegion = c(-3000, 3000),
-  centrality.measures = c("Degree"), weight.attr = NULL)
+  centrality.measures = c("Degree"), weight.attr = NULL,
+  simple.chrom.state = NULL, genomic.regions = NULL)
 }
 \arguments{
 \item{input.chrom.state}{The name of the file containing the information about chromatin states.}
@@ -23,7 +24,7 @@ build.chia.params(input.chrom.state = NULL, biosample = NULL,
 
 \item{pol.regions}{A \linkS4class{GRangesList} object containing the pol2 regions.}
 
-\item{expression.levels}{A data frame containing the levels of expression of genes, according to their EMSEMBL id.}
+\item{expression.data}{A data frame containing the levels of expression of genes, according to their EMSEMBL id.}
 }
 \value{
 An environment that can be passed to process.chia.pet, annotate.chia.pet or analyze.chia.pet.
