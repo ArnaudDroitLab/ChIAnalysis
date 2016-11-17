@@ -17,50 +17,39 @@ analyze.chromatin.states <- function(chia.obj, chia.params=NULL, output.dir="out
     if(!has.chrom.state(chia.obj)) {
         warning("No chromatin states to analyze!")
     } else {
-        # Write table of proportions of chromatin states/annotation types
-        state.proportions = table(chia.obj$Regions$Chrom.State)/length(chia.obj$Regions)
-        write.table(data.frame(State=names(state.proportions), Proportion=as.vector(state.proportions)),
-                    file.path(output.dir, "Chromatin states summary.txt"), sep="\t", col.names=TRUE, row.names=FALSE, quote=FALSE)
+        facet.col = c("Chrom.State"=6, "Simple.Chrom.State"=2)
+        param.name = c("Chrom.State"="input.chrom.state", "Simple.Chrom.State"="simple.chrom.state")
+        for(cs in c("Chrom.State", "Simple.Chrom.State")) {
+            # Write table of proportions of chromatin states/annotation types
+            state.proportions = table(chia.obj$Regions[[cs]])/length(chia.obj$Regions)
+            write.table(data.frame(State=names(state.proportions), Proportion=as.vector(state.proportions)),
+                        file.path(output.dir, paste0(cs, " summary.txt")), sep="\t", col.names=TRUE, row.names=FALSE, quote=FALSE)
 
-        # Plot proportions of chromatin states as a function of connectivity.
-        connectivity.df <- categorize.by.connectivity(chia.obj)
-        chia.plot.metrics(chia.obj, level.counts, connectivity.df, "Connectivity", "Proportion of nodes in category",
-                     graph.type = "line", facet.rows = 3, facet.cols = 6,
-                     file.out = file.path(output.dir, "Proportion of chromatin state as a function of connectivity category.pdf"),
-                     variable.name = "Chrom.State")
-        chia.plot.metrics(chia.obj, level.counts, connectivity.df, "Connectivity", "Proportion of nodes in category",
-                     graph.type = "line", facet.rows = 2, facet.cols = 2,
-                     file.out = file.path(output.dir, "Proportion of simple chromatin state as a function of connectivity category.pdf"),
-                     variable.name = "Simple.Chrom.State")
-                     
-        # Generate contact heatmaps.
-        contact.heatmap(chia.obj, "Chrom.State", "chromatin states", output.dir=output.dir)
-        contact.heatmap(chia.obj, "Simple.Chrom.State", "simple chromatin states", output.dir=output.dir)
-        
-        if(has.components(chia.obj)) {
-            size.categories <- categorize.by.components.size(chia.obj)
-            chia.plot.metrics(chia.obj, level.counts, size.categories, 
-              x.lab = "Size category", y.lab = "Proportion",
-              graph.type = "line", facet.rows = 3,
-              file.out = file.path(output.dir, "Proportion of chromatin state as a function of size category.pdf"),
-              variable.name = "Chrom.State", proportion = TRUE)
-              
-            chia.plot.metrics(chia.obj, level.counts, size.categories, 
-              x.lab = "Size category", y.lab = "Proportion",
-              graph.type = "line", facet.rows = 2,
-              file.out = file.path(output.dir, "Proportion of simple chromatin state as a function of size category.pdf"),
-              variable.name = "Simple.Chrom.State", proportion = TRUE)              
-        }
-        
-        if(!is.null(chia.params)) {
-            # Chromatin state enrichment of the whole network.
-            region.enrichment(get.granges(chia.obj), 
-                              chia.params$input.chrom.state, 
-                              file.out=file.path(output.dir, "Chromatin state enrichment of regions in network.pdf"))
-                      
-            region.enrichment(get.granges(chia.obj), 
-                              chia.params$simple.chrom.state, 
-                              file.out=file.path(output.dir, "Simple chromatin state enrichment of regions in network.pdf"))              
+            # Plot proportions of chromatin states as a function of connectivity.
+            connectivity.df <- categorize.by.connectivity(chia.obj)
+            chia.plot.metrics(chia.obj, level.counts, connectivity.df, "Connectivity", "Proportion of nodes in category",
+                         graph.type = "line", facet.cols = facet.col[cs],
+                         file.out = file.path(output.dir, paste0("Proportion of ", cs, " as a function of connectivity category.pdf")),
+                         variable.name = cs)
+                         
+            # Generate contact heatmaps.
+            contact.heatmap(chia.obj, cs, cs, output.dir=output.dir)
+            
+            if(has.components(chia.obj)) {
+                size.categories <- categorize.by.components.size(chia.obj)
+                chia.plot.metrics(chia.obj, level.counts, size.categories, 
+                  x.lab = "Size category", y.lab = "Proportion",
+                  graph.type = "line", facet.cols = facet.col[cs],
+                  file.out = file.path(output.dir, paste0("Proportion of ", cs, " as a function of size category.pdf")),
+                  variable.name = cs, proportion = TRUE)
+            }
+            
+            if(!is.null(chia.params)) {
+                # Chromatin state enrichment of the whole network.
+                region.enrichment(get.granges(chia.obj), 
+                                  chia.params[[param.name[cs] ]], 
+                                  file.out=file.path(output.dir, paste0(cs, " enrichment of regions in network.pdf")))
+            }
         }
     }
 }
@@ -161,6 +150,22 @@ analyze.gene.specificity <- function(chia.obj, output.dir="output") {
     }
 }
 
+chip.enrichment.vs.background <- function(all.chip, output.dir, suffix) {
+    if(length(all.chip) > 0) {
+        plot.width = (0.35 * length(all.chip)) + 2.45
+        if(!is.null(chia.params$input.chrom.state)) {
+            multiple.region.enrichment(all.chip, chia.params$input.chrom.state, plot.width=plot.width, 
+                                       file.prefix=file.path(output.dir, paste0("Chromatin states enrichments ", suffix)))
+            
+            multiple.region.enrichment(all.chip, chia.params$simple.chrom.state, plot.width=plot.width, 
+                                       file.prefix=file.path(output.dir, paste0("Simple chromatin states enrichments", suffix)))
+        }
+        
+        multiple.region.enrichment(all.chip, chia.params$genomic.regions, plot.width=plot.width, 
+                                   file.prefix=file.path(output.dir, paste0("Genomic regions enrichments", suffix)))        
+    }
+}
+
 #' Analyze the TF of ChIA-PET data
 #' Produce a plot of the presence of TF at the connection points of ChIA-PET data, according to the
 #' connectivity of the nodes.
@@ -169,39 +174,28 @@ analyze.gene.specificity <- function(chia.obj, output.dir="output") {
 #' @param output.dir The name of the directory where to save the graphs.
 #'
 #' @importFrom reshape2 melt
-analyze.tf <- function(chia.obj, output.dir="output") {
+analyze.tf <- function(chia.obj, chia.params=NULL, output.dir="output") {
     if(has.transcription.factors(chia.obj)) {
-        # Extract the overlap matrix from the region annotations.
-        overlap.matrix <- as.matrix(get.tf(chia.obj))
-
-        # Look at TF presence curves as a function of connectivity
-        boundaries.list = list(Singles=c(0, 1), Low=c(1, 5), Intermediate=c(5, 20), High=c(20, 1000))
-        results = matrix(0, nrow=ncol(overlap.matrix), ncol=length(boundaries.list),
-                         dimnames=list(Rows=colnames(overlap.matrix), Columns=names(boundaries.list)))
-
-        # Loop over boundaries and TFs, calculating percentages of overlap.
-        for(i in 1:length(boundaries.list)) {
-            for(j in 1:ncol(overlap.matrix)) {
-                boundaries = boundaries.list[[i]]
-                indices = chia.obj$Regions$Degree > boundaries[1] & chia.obj$Regions$Degree <= boundaries[2]
-
-                results[j,i] <- sum(overlap.matrix[indices,j] > 0) / sum(indices)
+        # Plot TF/chip presence against node connectivity.
+        connectivity.df <- categorize.by.connectivity(chia.obj)
+        metrics = chia.plot.metrics(chia.obj, metric.function=get.all.tf.proportion, 
+                                    node.categories=connectivity.df, graph.type="line", 
+                                    file.out=file.path(output.dir, "TF presence on contact point by connectivity.pdf"))
+        write.table(metrics$Metrics, file=file.path(output.dir, "TF presence on contact point by connectivity.txt"), 
+                    sep="\t", col.names=TRUE, row.names=FALSE)
+                    
+        # Perform TF/chip enrichment against genomic background, for both all TF/ChIP regions
+        # and TF/ChIP regions within network.
+        if(!is.null(chia.params)) {
+            all.chip = c(chia.params$tf.regions, chia.params$pol.regions, chia.params$histone.regions)
+            chip.enrichment.vs.background(all.chip, output.dir, "(All)")
+            
+            in.network.chip = GRangesList()
+            for(chip in get.chips.names(chia.obj)) {
+                in.network.chip[[chip]] = get.granges(select.by.chip(chia.obj, chip))
             }
+            chip.enrichment.vs.background(in.network.chip, output.dir, "(In network)")
         }
-
-        results.df =  melt(results)
-        colnames(results.df) = c("TF", "Connectivity", "Proportion")
-        results.df$Connectivity = factor(results.df$Connectivity, levels = names(boundaries.list))
-
-        # Reorganize TF by slope
-        results.df$TF = factor(results.df$TF, levels=rownames(results)[order(results[,4]-results[,1])])
-        write.table(results.df, file=file.path(output.dir, "TF presence on contact point by connectivity.txt"), sep="\t", col.names=TRUE, row.names=FALSE)
-        
-        ggplot(data=results.df, aes(x=Connectivity, y=Proportion)) +
-            geom_line(group=1) +
-            facet_wrap(~TF, ncol=10) +
-            theme(axis.text.x = element_text(angle = 90, hjust = 1))
-        ggsave(file.path(output.dir, "TF presence on contact point by connectivity.pdf"), width=14, height=14)
     } else {
         warning("No transcription factor to analyze!")
     }
@@ -381,7 +375,7 @@ analyze.chia.pet <- function(chia.obj, chia.params=NULL, output.dir=".", verbose
     analyze.expression(chia.obj, chia.params, file.path.create(output.dir, "Expression"))
 
     cat(date(), " : Analyzing transcription factor overlaps...\n",cat.sink)
-    analyze.tf(chia.obj, output.dir)
+    analyze.tf(chia.obj, chia.params, file.path.create(output.dir, "Transcription factors"))
 
     cat(date(), " : Analyzing gene specificity...\n",cat.sink)
     analyze.gene.specificity(chia.obj, file.path.create(output.dir, "Expression"))

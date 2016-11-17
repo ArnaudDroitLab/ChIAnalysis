@@ -444,7 +444,7 @@ select.by.polymerase <- function(chia.obj, polymerase.names) {
 #'   histone marks.
 #' @export
 select.by.histone <- function(chia.obj, histone.names) {
-    select.by.chip.generic(chia.obj, tf.names, nodes.with.histones)
+    select.by.chip.generic(chia.obj, histone.names, nodes.with.histones)
 }
 
 #' Returns a subset of a ChIA object containing only nodes with the specified 
@@ -457,7 +457,7 @@ select.by.histone <- function(chia.obj, histone.names) {
 #'   ChIPs.
 #' @export
 select.by.chip <- function(chia.obj, chip.names) {
-    select.by.chip.generic(chia.obj, tf.names, nodes.with.chip)
+    select.by.chip.generic(chia.obj, chip.names, nodes.with.chip)
 }
 
 select.by.chip.generic <- function(chia.obj, chip.names, nodes.with.function) {

@@ -486,6 +486,21 @@ number.of.generic <- function(chia.obj, object.names, get.function) {
     return(results)
 }
 
+#' Obtain the proportion of regions intersecting a ChIP dataset, for all ChIP datasets.
+#'
+#' @param chia.obj A ChIA-PET object.
+#'
+#' @return A named numeric vector containing the proportion of regions intersecting the ChIP datasets
+#' @export
+get.all.chip.proportion <- function(chia.obj) {
+    ret = c()
+    for(chip in get.chips.names(chia.obj)) {
+        ret[chip] = sum(number.of.chips(chia.obj, chip))/number.of.nodes(chia.obj)
+    }
+    
+    return(ret)
+}
+
 #' Returns a list of all statistics for a given ChIA object.
 #'
 #' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
