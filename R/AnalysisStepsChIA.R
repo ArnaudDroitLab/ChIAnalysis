@@ -178,7 +178,7 @@ analyze.tf <- function(chia.obj, chia.params=NULL, output.dir="output") {
     if(has.transcription.factors(chia.obj)) {
         # Plot TF/chip presence against node connectivity.
         connectivity.df <- categorize.by.connectivity(chia.obj)
-        metrics = chia.plot.metrics(chia.obj, metric.function=get.all.tf.proportion, 
+        metrics = chia.plot.metrics(chia.obj, metric.function=get.all.chip.proportion, 
                                     node.categories=connectivity.df, graph.type="line", 
                                     file.out=file.path(output.dir, "TF presence on contact point by connectivity.pdf"))
         write.table(metrics$Metrics, file=file.path(output.dir, "TF presence on contact point by connectivity.txt"), 
