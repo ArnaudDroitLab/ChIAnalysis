@@ -192,26 +192,30 @@ associate.regions.by.name <- function(chia.obj, annotation.regions, annotation.n
 
 #' Adds gene-specific annotations to chia.obj.
 #'
-#' Given a data frame where the first column are gene symbols, and the second column
-#' are values associated with the given gene, this function finds teh gene representatives
-#' nodes for all symbols and attaches the given annotation to it.
+#' Given a vector of gene symbols and a vector of values associated with
+#' those genes, this function finds the nodes for all symbols and 
+#' attaches the given annotation to it.
 #'
 #' @param chia.obj A chia object to annotate.
-#' @param annotation.df A data frame where the first column is a gene symbol, and the
-#'   second one is a value to be associated to that gene.
+#' @param gene.symbols The symbols associated with the given values.
+#' @param values The values to associate the chia.obj with.
+#' @param representative.only If true, only gene representative nodes are
+#'   associated with the given values.
 #' @param label The label the annotation should be given in the chia object.
 #'
 #' @return The ChIA object with the added annotation.
 #' @export
-add.gene.annotation <- function(chia.obj, annotation.df, label) {
+add.gene.annotation <- function(chia.obj, gene.symbols, values, label, representative.only=TRUE) {
     # Associate the values with their gene.
-    values = annotation.df[match(chia.obj$Regions$SYMBOL, annotation.df[,1]), 2]
+    matched.values = values[match(chia.obj$Regions$SYMBOL, gene.symbols)]
     
     # Only keep the values for gene representatives.
-    values[!chia.obj$Regions$Gene.Representative] <- NA
+    if(representative.only) {
+        matched.values[!chia.obj$Regions$Gene.Representative] <- NA
+    }
     
     # Add the values to the chia.obj's regions.
-    chia.obj$Regions[,label] = values
+    chia.obj$Regions[,label] = matched.values
     
     return(chia.obj)
 }
