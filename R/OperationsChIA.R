@@ -178,7 +178,7 @@ output.annotated.chia <- function(chia.obj, output.dir="output") {
   # Export region annotation, putting the ID in the first column.
   chia.data <- as.data.frame(chia.obj$Regions)
   chia.data <- cbind(chia.data$ID, chia.data[,-which(colnames(chia.data) == "ID")])
-  write.table(chia.data, file = file.path(output.dir, "Annotated CHIA-PET regions.txt"), row.names = FALSE, sep = "\t")
+  write.table(chia.data, file = file.path(output.dir, "Annotated CHIA-PET regions.txt"), row.names = FALSE, sep = "\t", quote=FALSE)
 
   # Write out annotated interactions by concatening left and right annotations.
   left.df = as.data.frame(chia.left(chia.obj))
@@ -186,7 +186,7 @@ output.annotated.chia <- function(chia.obj, output.dir="output") {
   right.df = as.data.frame(chia.right(chia.obj))
   colnames(right.df) <- paste("Right", colnames(right.df), sep=".")
 
-  write.table(data.frame(left.df, right.df), file=file.path(output.dir, "Interactions.txt"), sep="\t", col.names=TRUE)
+  write.table(data.frame(left.df, right.df), file=file.path(output.dir, "Interactions.txt"), sep="\t", col.names=TRUE, quote=FALSE)
 
 
   # Output Cytoscape components
@@ -221,7 +221,7 @@ output.annotated.chia <- function(chia.obj, output.dir="output") {
       }
       write.table(network[1:3],
                   file = file.path(cyto.dir, dir, paste0("Create network for components ", i, "(", size, " nodes)", ".csv")),
-                  sep = ",", row.names = FALSE)
+                  sep = ",", row.names = FALSE, quote=FALSE)
     }
   }
   chia.data <- as.data.frame(chia.obj$Regions)
