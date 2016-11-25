@@ -4,22 +4,27 @@
 \alias{add.gene.annotation}
 \title{Adds gene-specific annotations to chia.obj.}
 \usage{
-add.gene.annotation(chia.obj, annotation.df, label)
+add.gene.annotation(chia.obj, gene.symbols, values, label,
+  representative.only = TRUE)
 }
 \arguments{
 \item{chia.obj}{A chia object to annotate.}
 
-\item{annotation.df}{A data frame where the first column is a gene symbol, and the
-second one is a value to be associated to that gene.}
+\item{gene.symbols}{The symbols associated with the given values.}
+
+\item{values}{The values to associate the chia.obj with.}
 
 \item{label}{The label the annotation should be given in the chia object.}
+
+\item{representative.only}{If true, only gene representative nodes are
+associated with the given values.}
 }
 \value{
 The ChIA object with the added annotation.
 }
 \description{
-Given a data frame where the first column are gene symbols, and the second column
-are values associated with the given gene, this function finds teh gene representatives
-nodes for all symbols and attaches the given annotation to it.
+Given a vector of gene symbols and a vector of values associated with
+those genes, this function finds the nodes for all symbols and 
+attaches the given annotation to it.
 }
 

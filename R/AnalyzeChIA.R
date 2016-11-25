@@ -304,3 +304,54 @@ genomewide.expression.vs.network <- function(chia.obj, chia.params, output.dir) 
     
     return(plot.df)
 }
+
+#' Represents contact-frequencies between different categories of elements
+#' as a stylized graph.
+#'
+#' Creates a graph where each node represents a node category from the original chia.obj,
+#' and edge width represents the frequency of those contacts. Node size is
+#' also proportional to the number of nodes in the given category.
+#'
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param col.name The name of the column on which the contact graph should be based.
+#' @param file.name The name of the output file.
+#'
+#' @import igraph
+#'
+#' @export
+fancy.topology <- function(chia.obj, col.name, file.name=paste0("Abstract inter-category contact graph for ", col.name, ".pdf")) {
+    # Remove any node with unknown chromatin state.
+    chia.subset = chia.vertex.subset(chia.obj, !is.na(chia.obj$Regions[[col.name]]))
+    
+    # Get list of "left" and "right" items.
+    left = as.integer(chia.left(chia.subset)[[col.name]])
+    right = as.integer(chia.right(chia.subset)[[col.name]])
+
+    # Cross-tabulate, and group elements where only order differ.
+    cross.table = table(data.frame(Left=left, Right=right))
+    for(i in 1:(ncol(cross.table) - 1)) {
+        for(j in (i+1):nrow(cross.table)) {
+            cross.table[j, i] = cross.table[j, i] + cross.table[i, j]
+            cross.table[i, j] = 0
+        }
+    }
+    
+    # Remove zero elements (So only X -> Y remain, and all Y -> X are lost)
+    cross.df = melt(cross.table)
+    cross.df = cross.df[cross.df$value != 0,]
+
+    # Make a graph
+    graph.obj = make_graph(c(rbind(cross.df$Left, cross.df$Right)), directed = FALSE)    
+    edge_attr(graph.obj) <- data.frame(Weight=cross.df$value)
+    vertex_names = levels(chia.obj$Regions[[col.name]])
+    vertex_weights = as.integer(table(chia.obj$Regions[[col.name]])[vertex_names])
+    vertex_attr(graph.obj) <- data.frame(Name=vertex_names, Weight=vertex_weights)
+
+    pdf(file.name, width=21, height=14)
+    plot(graph.obj, 
+         vertex.label = as.character(vertex_attr(graph.obj)$Name),
+         vertex.size = vertex_attr(graph.obj)$Weight / 1000,
+         edge.width = edge_attr(graph.obj)$Weight / 1000,
+         layout=layout_in_circle)
+    dev.off()
+}
