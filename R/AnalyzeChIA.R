@@ -324,11 +324,11 @@ fancy.topology <- function(chia.obj, col.name, file.name=paste0("Abstract inter-
     chia.subset = chia.vertex.subset(chia.obj, !is.na(chia.obj$Regions[[col.name]]))
     
     # Get list of "left" and "right" items.
-    left = as.integer(chia.left(chia.subset)[[col.name]])
-    right = as.integer(chia.right(chia.subset)[[col.name]])
+    left = chia.left(chia.subset)[[col.name]]
+    right = chia.right(chia.subset)[[col.name]]
 
     # Cross-tabulate, and group elements where only order differ.
-    cross.table = table(data.frame(Left=left, Right=right))
+    cross.table = table(data.frame(Left=as.integer(left), Right=as.integer(right)))
     for(i in 1:(ncol(cross.table) - 1)) {
         for(j in (i+1):nrow(cross.table)) {
             cross.table[j, i] = cross.table[j, i] + cross.table[i, j]
@@ -354,4 +354,13 @@ fancy.topology <- function(chia.obj, col.name, file.name=paste0("Abstract inter-
          edge.width = edge_attr(graph.obj)$Weight / 1000,
          layout=layout_in_circle)
     dev.off()
+    
+    # Generate tables to accompany graph.
+    colnames(cross.table) = levels(left)
+    rownames(cross.table) = levels(left)
+    
+    sink(paste0(file.name, ".txt"))
+    print(list(EdgeWeights=cross.table,
+               VertexWeights=table(chia.obj$Regions[[col.name]])))
+    sink(NULL)
 }
