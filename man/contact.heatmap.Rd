@@ -4,17 +4,29 @@
 \alias{contact.heatmap}
 \title{Create a heatmap by connectivity group.}
 \usage{
-contact.heatmap(chia.obj, variable.name, label, output.dir, log.scale = FALSE,
-  proportions = FALSE, show.labels = FALSE)
+contact.heatmap(chia.obj, variable.name, label = NULL, output.dir = NULL,
+  log.scale = FALSE, proportions = FALSE, stretch.scale = proportions,
+  show.labels = FALSE, file.name = file.path(output.dir,
+  paste0("Contact heatmap for ", label, ".pdf")))
 }
 \arguments{
 \item{chia.obj}{A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.}
 
 \item{variable.name}{The name of the variable according to which the heatmap should be computed.}
 
-\item{label}{The Name to give te the variable name in the resulting heatmap.}
+\item{label}{The name to give to the variable name in the resulting heatmap.}
 
 \item{output.dir}{The name of the directory where to save the heatmaps.}
+
+\item{log.scale}{Should the color scale be logged?}
+
+\item{proportions}{Should proportions of contacts be represented rather than the absolute numbers?}
+
+\item{stretch.scale}{Should the scale extend from 0 to 100?}
+
+\item{show.labels}{Should each tile contain a label with its number/proportion?}
+
+\item{file.name}{The name of the file where the heatmap should be saved.}
 }
 \value{
 The matrix used to create the heatmap.

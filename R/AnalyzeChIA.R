@@ -2,14 +2,21 @@
 #'
 #' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
 #' @param variable.name The name of the variable according to which the heatmap should be computed.
-#' @param label The Name to give te the variable name in the resulting heatmap.
+#' @param label The name to give to the variable name in the resulting heatmap.
 #' @param output.dir The name of the directory where to save the heatmaps.
+#' @param log.scale Should the color scale be logged?
+#' @param proportions Should proportions of contacts be represented rather than the absolute numbers?
+#' @param stretch.scale Should the scale extend from 0 to 100?
+#' @param show.labels Should each tile contain a label with its number/proportion?
+#' @param file.name The name of the file where the heatmap should be saved.
 #'
 #' @return The matrix used to create the heatmap.
 #'
 #' @importFrom reshape2 melt
 #' @export
-contact.heatmap <- function(chia.obj, variable.name, label, output.dir, log.scale=FALSE, proportions=FALSE, show.labels=FALSE) {
+contact.heatmap <- function(chia.obj, variable.name, label=NULL, output.dir=NULL, 
+                            log.scale=FALSE, proportions=FALSE, stretch.scale=proportions, show.labels=FALSE, 
+                            file.name=file.path(output.dir, paste0("Contact heatmap for ", label, ".pdf"))) {
   type.df = data.frame(Left=chia.left(chia.obj)[,variable.name],
                        Right=chia.right(chia.obj)[,variable.name],
                        stringsAsFactors=FALSE)
@@ -30,7 +37,7 @@ contact.heatmap <- function(chia.obj, variable.name, label, output.dir, log.scal
     results.matrix = results.matrix / nrow(type.df)
   }
   
-  scale.name = ifelse(proportions, "Proportion of contacts", "No of contacts")
+  scale.name = ifelse(proportions, "Percentage of contacts", "No of contacts")
   if(log.scale) {
     results.matrix = log10(results.matrix+1)
     scale.name = paste0("log10(", scale.name, ")")
@@ -41,12 +48,24 @@ contact.heatmap <- function(chia.obj, variable.name, label, output.dir, log.scal
 
   results.df$Var1 = factor(results.df$Var1, levels = rev(var.levels))
   results.df$Var2 = factor(results.df$Var2, levels = var.levels)
-  plot.obj = ggplot(results.df, aes(y=Var1, x=Var2, fill=value)) +
+  if(proportions) {
+    plot.obj = ggplot(results.df, aes(y=Var1, x=Var2, fill=value*100))
+  } else {
+    plot.obj = ggplot(results.df, aes(y=Var1, x=Var2, fill=value))
+  }
+  
+  if(stretch.scale) {
+    limits=c(0,100)
+  } else {
+    limits=c(min(results.df$Value), max(results.df$Value))
+  }      
+  
+  plot.obj = plot.obj +  
                geom_tile(color="black") +
-               scale_fill_gradient(low="white", high="Blue", name=scale.name) +
                labs(x=NULL, y=NULL) +
+               scale_fill_gradient(low="white", high="red", name=scale.name, limits=limits) +
                theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.key.size = unit(1, "cm"))
-               
+
   if(show.labels) {
     # Can't sue the same albel size for 4 rows as we do for 18.
     # 2 is a good size for 18 rows, 8 is a good size for 4. Extrapolate
@@ -60,7 +79,8 @@ contact.heatmap <- function(chia.obj, variable.name, label, output.dir, log.scal
       plot.obj = plot.obj + geom_text(mapping=aes(y=Var1, x=Var2, label=value), size=label.size)
     }
   }
-  ggsave(file.path(output.dir, paste0("Contact heatmap for ", label, ".pdf")))
+  ggsave(file.name)
+  write.table(results.matrix, file=paste0(file.name, ".txt"), sep="\t", row.names=TRUE, col.names=TRUE)
 
   return(results.matrix)
 }
