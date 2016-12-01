@@ -188,13 +188,15 @@ output.annotated.chia <- function(chia.obj, output.dir="output") {
 
   write.table(data.frame(left.df, right.df), file=file.path(output.dir, "Interactions.txt"), sep="\t", col.names=TRUE, quote=FALSE)
 
-
-  # Output Cytoscape components
-
+  # Output Cytoscape components  
   # Create interactions table
-  ids <- data.frame(left.df$Left.ID, right.df$Right.ID, edge_attr(chia.obj$Graph)$Reads, left.df$Left.Component.Id)
+  if(is.null(edge_attr(chia.obj$Graph)$Reads)) {
+    read.counts = NA
+  } else {
+    read.counts = edge_attr(chia.obj$Graph)$Reads
+  }
+  ids <- data.frame(left.df$Left.ID, right.df$Right.ID, read.counts, left.df$Left.Component.Id)
   colnames(ids) <- c("Source", "Target", "Reads", "Component")
-
 
   # Export networks in csv files
   cyto.dir = file.path(output.dir, "Cytoscape networks")
@@ -462,4 +464,72 @@ select.by.chip <- function(chia.obj, chip.names) {
 
 select.by.chip.generic <- function(chia.obj, chip.names, nodes.with.function) {
     chia.vertex.subset(chia.obj, nodes.with.function(chia.obj, chip.names))
+}
+
+
+#' Contracts an interaction network, keeping only the vertices in indices.
+#'
+#' Suppose we have a ring network, 1->2->3->4->5->1.
+#' Now suppose the passed indices are 2, 4 and 5.
+#' Thus, nodes 1 and 3 would be removed, and new edges from 2 to 4 and 5 to
+#' 2 would be added. The new network would be:
+#' 2->4->5->2.
+#'
+#' @param chia.obj The ChIA object to be contracted.
+#' @param chip.names The indices of the regions to keep in the output chia object.
+#'
+#' @return A contracted ChIA object.
+#' @import igraph
+#' @export
+chia.contract <- function(chia.obj, indices) {
+    # Get the vertex IDs we're going to keep.
+    kept.ids = paste0("ChIA-", as.character(chia.obj$Regions$ID[indices]))
+    graph.obj = chia.obj$Graph
+   
+    # Attribute names to nodes to help working with igraph methods.
+    vertex_attr(graph.obj) <- list(name=paste0("ChIA-", as.character(chia.obj$Regions$ID)))
+   
+    one.substitution = TRUE
+    while(one.substitution) {
+      one.substitution = FALSE
+      # Shortcut for vertez names
+      vertex.names = vertex_attr(graph.obj)$name
+      
+      # Initially, all nodes are part of their own set.
+      vertex.mapping = vertex.names
+      names(vertex.mapping) = vertex.names
+      
+      # Loop over IDs, marking all neighbors which are not in the input set.
+      for(i in kept.ids) {
+          # Identify neighbors
+          neighborhood = neighbors(graph.obj, i)   
+         
+          # Remove any identifiers which is in the input set.
+          neighbor.ids  = setdiff(names(neighborhood), kept.ids)
+         
+          if(length(neighbor.ids)>0) {
+              vertex.mapping[neighbor.ids] = i
+              one.substitution = TRUE
+          }
+      }
+      
+      # Convert the vertex mapping to new numeric IDs.
+      integer.mapping = 1:length(unique(vertex.mapping))
+      names(integer.mapping) = unique(vertex.mapping)
+      
+      temp.graph = contract(graph.obj, integer.mapping[vertex.mapping])
+      new.names = unlist(lapply(vertex_attr(temp.graph)$name, function(x) { ifelse(length(x)>1, intersect(x, kept.ids), x) }))
+      vertex_attr(temp.graph) = list(name=new.names)
+      
+      graph.obj = temp.graph
+    }
+    
+    # Match vertices back to their original regions.
+    new.regions.indices = match(gsub("ChIA-", "", vertex_attr(graph.obj)$name), chia.obj$Regions$ID)
+    vertex_attr(graph.obj) <- list()
+    
+    new.chia = list(Graph=simplify(graph.obj),
+                    Regions=chia.obj$Regions[new.regions.indices,])
+
+    return(new.chia)
 }
