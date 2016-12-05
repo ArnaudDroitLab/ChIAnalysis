@@ -116,14 +116,18 @@ fold.change.coherence <- function(fc.column) {
     }
 }
 
-#' Determine which regions are in the top 25% and in the bottom 25% of expression.
+#' Categorizes regions according to their expression level.
 #'
-#' @param chia.obj The base ChIA object on which to assess gene activity.
-#' @param top The expression value limit of the top 25% expressed genes.
-#' @param bottom The expression value limit of the bottom 25% expressed genes.
+#' Given expression threshold, this function classifies all regions as 
+#' belonging to a gene "below" the bottom expression level or "above" the top
+#' expression level.
 #'
-#' @return A 2-level vector with "Top", "Bottom" or NA depending on its expression level.
+#' @param chia.obj The chia object whose regions must be classified.
+#' @param top The threshold above which a region is classified as "Top".
+#' @param bottom The threshold under which a region is classified as "Bottom".
 #'
+#' @return A vector with a 2-level factor, where regions are classified either
+#'   as "Top", "Bottom" or NA according to their expression level.
 #' @export
 expression.coherence <- function(chia.obj, top, bottom) {
   

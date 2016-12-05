@@ -2,21 +2,24 @@
 % Please edit documentation in R/CoherenceChIA.R
 \name{expression.coherence}
 \alias{expression.coherence}
-\title{Determine which regions are in the top 25% and in the bottom 25% of expression.}
+\title{Categorizes regions according to their expression level.}
 \usage{
 expression.coherence(chia.obj, top, bottom)
 }
 \arguments{
-\item{chia.obj}{The base ChIA object on which to assess gene activity.}
+\item{chia.obj}{The chia object whose regions must be classified.}
 
-\item{top}{The expression value limit of the top 25% expressed genes.}
+\item{top}{The threshold above which a region is classified as "Top".}
 
-\item{bottom}{The expression value limit of the bottom 25% expressed genes.}
+\item{bottom}{The threshold under which a region is classified as "Bottom".}
 }
 \value{
-A 2-level vector with "Top", "Bottom" or NA depending on its expression level.
+A vector with a 2-level factor, where regions are classified either
+  as "Top", "Bottom" or NA according to their expression level.
 }
 \description{
-Determine which regions are in the top 25% and in the bottom 25% of expression.
+Given expression threshold, this function classifies all regions as 
+belonging to a gene "below" the bottom expression level or "above" the top
+expression level.
 }
 

@@ -1,12 +1,6 @@
 #' Analyze the chromatin state of ChIA-PET data
 #'
-#' Analyzes ChIA-PET data and produces graphs according to its chromatin states: \describe{
-#' \item{Chromatin states summary.txt}{A file with the summary of chromatin states.}
-#' \item{log Degree histogram per chromatin state.pdf}
-#'      {A histogram of the degree of each node according to the chromatin state.}
-#' \item{Proportion of chromatin state as a function of connectivity category.pdf}
-#'      {A plot of the proportion of chromatin state as a fonction of connectivity category.}
-#' \item{Contact heatmap for chromatin states.pdf}{A contact heatmap of chromatin states.}}
+#' Analyzes ChIA-PET data and produces graphs according to its chromatin states.
 #'
 #' @param chia.obj A list containing the annotated ChIA-PET data, as returned
 #'    by \code{\link{annotate.chia}}
@@ -56,12 +50,7 @@ analyze.chromatin.states <- function(chia.obj, chia.params=NULL, output.dir="out
 
 #' Analyze the annotation of ChIA-PET data
 #'
-#' Analyzes ChIA-PET data and produces graphs according to the annotation: \describe{
-#' \item{Proportion of genomic location as a function of connectivity category.pdf}
-#'      {A plot of the proportion of the genomic location of the regions as a 
-#'       fonction of connectivity category.}
-#' \item{Contact heatmap for genomic location.pdf}
-#'      {A contact heatmap of the genomic location of the regions.}}
+#' Analyzes ChIA-PET data and produces graphs according to the available annotation.
 #'
 #' @param chia.obj A list containing the annotated ChIA-PET data, as returned 
 #'    by \code{\link{annotate.chia}}
