@@ -229,7 +229,7 @@ output.annotated.chia <- function(chia.obj, output.dir="output") {
   chia.data <- as.data.frame(chia.obj$Regions)
   chia.data <- cbind(chia.data$ID, chia.data[,-which(colnames(chia.data) == "ID")])
   colnames(chia.data)[1] <- "ID"
-  write.table(chia.data, file = file.path(output.dir, "Annotated CHIA-PET regions.txt"), row.names = FALSE, sep = "\t")
+  write.table(chia.data, file = file.path(output.dir, "Annotated CHIA-PET regions.txt"), row.names = FALSE, sep = "\t", quote=FALSE)
 }
 
 
