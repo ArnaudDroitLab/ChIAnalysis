@@ -1,19 +1,44 @@
 #' Create an object storing parameters for ChIA processing.
 #'
-#' @param input.chrom.state The name of the file containing the information about chromatin states.
-#' @param biosample The biosample identifier from ENCODE. Valid examples are GM12878, K562 or MCF-7.
-#' @param genome.build The name of the chosen annotation ("hg38", "hg19").
-#' @param tf.regions A \linkS4class{GRangesList} object containing TF regions.
-#' @param histone.regions A \linkS4class{GRangesList} object containing histone regions.
-#' @param pol.regions A \linkS4class{GRangesList} object containing the pol2 regions.
-#' @param expression.data A data frame containing the levels of expression of genes, according to their EMSEMBL id.
+#' @param input.chrom.state A GRanges object containing chromatin states.
+#' @param biosample The biosample identifier from ENCODE. Valid examples are
+#'   GM12878, K562 or MCF-7.
+#' @param genome.build The name of genomic build all genomic coordinates are 
+#'   provided in ("hg38", "hg19", etc).
+#' @param tf.regions A \linkS4class{GRangesList} object containing regions 
+#'   where transcription factors bind.
+#' @param histone.regions A \linkS4class{GRangesList} object containing regions
+#'   where histone marks are found.
+#' @param pol.regions A \linkS4class{GRangesList} object containing polymerase
+#'   binding regions.
+#' @param expression.data A data frame containing the levels of expression of 
+#'   genes, according to their EMSEMBL id.
+#' @param tad.regions A GRanges object containign TAD boundaries.
+#' @param compartments.regions A GRanges object containing compartment
+#'   boundaries.
+#' @param tssRegion A 2-element integer vector indicating how far from the TSS
+#'   the "Promoter" region should extend.
+#' @param centrality.measures The centrality measures to use. A vector 
+#'   containing at least one of "Degree", "Betweenness", "Eigenvector",
+#'   "Closeness"
+#' @param weight.attr The name of the edge attribute to be used as weight when
+#'   calculating centralities or splitting the network into its component 
+#'   communities.
+#' @param simple.chrom.state A simplified version of the chromatin states. If
+#'   NULL, those are inferred from input.chrom.state when possible.
+#' @param genomic.regions A partition of the genome into different kind of 
+#'   genomic regions, such as "Intron", "Exon", "Promoter", etc.
+#' @param gene.annotations A named list providing per-gene annotations. Each 
+#'   element of the list should be a named vector, where each element is named
+#'   after the gene it annotates.
 #'
-#' @return An environment that can be passed to process.chia.pet, annotate.chia.pet or analyze.chia.pet.
+#' @return An environment that can be passed to \code{\link{process.chia.pet}}, 
+#'   \code{\link{annotate.chia.pet}} or \code{\link{analyze.chia.pet}}.
 #' @export
 build.chia.params <- function(input.chrom.state = NULL, biosample = NULL, genome.build = NULL, tf.regions = NULL,
                              histone.regions = NULL, pol.regions = NULL, expression.data = NULL, tad.regions = NULL,
                              compartments.regions = NULL, tssRegion = c(-3000, 3000), centrality.measures=c("Degree"),
-                             weight.attr=NULL, simple.chrom.state=NULL, genomic.regions=NULL) {
+                             weight.attr=NULL, simple.chrom.state=NULL, genomic.regions=NULL, gene.annotations=NULL) {
     chia.params = new.env()
     
     chia.params$biosample = biosample
@@ -30,6 +55,8 @@ build.chia.params <- function(input.chrom.state = NULL, biosample = NULL, genome
     chia.params$tssRegion = tssRegion
     chia.params$centrality.measures = centrality.measures
     chia.params$weight.attr = weight.attr
+    chia.params$gene.annotations = gene.annotations
+    
                
     # Calculate simplified chromatin states.
     chia.params = simplify.param.chrom.states(chia.params)

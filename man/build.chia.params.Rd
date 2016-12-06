@@ -9,25 +9,59 @@ build.chia.params(input.chrom.state = NULL, biosample = NULL,
   pol.regions = NULL, expression.data = NULL, tad.regions = NULL,
   compartments.regions = NULL, tssRegion = c(-3000, 3000),
   centrality.measures = c("Degree"), weight.attr = NULL,
-  simple.chrom.state = NULL, genomic.regions = NULL)
+  simple.chrom.state = NULL, genomic.regions = NULL,
+  gene.annotations = NULL)
 }
 \arguments{
-\item{input.chrom.state}{The name of the file containing the information about chromatin states.}
+\item{input.chrom.state}{A GRanges object containing chromatin states.}
 
-\item{biosample}{The biosample identifier from ENCODE. Valid examples are GM12878, K562 or MCF-7.}
+\item{biosample}{The biosample identifier from ENCODE. Valid examples are
+GM12878, K562 or MCF-7.}
 
-\item{genome.build}{The name of the chosen annotation ("hg38", "hg19").}
+\item{genome.build}{The name of genomic build all genomic coordinates are 
+provided in ("hg38", "hg19", etc).}
 
-\item{tf.regions}{A \linkS4class{GRangesList} object containing TF regions.}
+\item{tf.regions}{A \linkS4class{GRangesList} object containing regions 
+where transcription factors bind.}
 
-\item{histone.regions}{A \linkS4class{GRangesList} object containing histone regions.}
+\item{histone.regions}{A \linkS4class{GRangesList} object containing regions
+where histone marks are found.}
 
-\item{pol.regions}{A \linkS4class{GRangesList} object containing the pol2 regions.}
+\item{pol.regions}{A \linkS4class{GRangesList} object containing polymerase
+binding regions.}
 
-\item{expression.data}{A data frame containing the levels of expression of genes, according to their EMSEMBL id.}
+\item{expression.data}{A data frame containing the levels of expression of 
+genes, according to their EMSEMBL id.}
+
+\item{tad.regions}{A GRanges object containign TAD boundaries.}
+
+\item{compartments.regions}{A GRanges object containing compartment
+boundaries.}
+
+\item{tssRegion}{A 2-element integer vector indicating how far from the TSS
+the "Promoter" region should extend.}
+
+\item{centrality.measures}{The centrality measures to use. A vector 
+containing at least one of "Degree", "Betweenness", "Eigenvector",
+"Closeness"}
+
+\item{weight.attr}{The name of the edge attribute to be used as weight when
+calculating centralities or splitting the network into its component 
+communities.}
+
+\item{simple.chrom.state}{A simplified version of the chromatin states. If
+NULL, those are inferred from input.chrom.state when possible.}
+
+\item{genomic.regions}{A partition of the genome into different kind of 
+genomic regions, such as "Intron", "Exon", "Promoter", etc.}
+
+\item{gene.annotations}{A named list providing per-gene annotations. Each 
+element of the list should be a named vector, where each element is named
+after the gene it annotates.}
 }
 \value{
-An environment that can be passed to process.chia.pet, annotate.chia.pet or analyze.chia.pet.
+An environment that can be passed to \code{\link{process.chia.pet}}, 
+  \code{\link{annotate.chia.pet}} or \code{\link{analyze.chia.pet}}.
 }
 \description{
 Create an object storing parameters for ChIA processing.

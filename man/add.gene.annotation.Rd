@@ -4,15 +4,13 @@
 \alias{add.gene.annotation}
 \title{Adds gene-specific annotations to chia.obj.}
 \usage{
-add.gene.annotation(chia.obj, gene.symbols, values, label,
-  representative.only = TRUE)
+add.gene.annotation(chia.obj, values, label, representative.only = TRUE)
 }
 \arguments{
 \item{chia.obj}{A chia object to annotate.}
 
-\item{gene.symbols}{The symbols associated with the given values.}
-
-\item{values}{The values to associate the chia.obj with.}
+\item{values}{A named vector containing the values to associate the
+chia.obj with. Each element should be named with a gene symbol.}
 
 \item{label}{The label the annotation should be given in the chia object.}
 

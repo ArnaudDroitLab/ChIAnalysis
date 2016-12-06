@@ -197,17 +197,17 @@ associate.regions.by.name <- function(chia.obj, annotation.regions, annotation.n
 #' attaches the given annotation to it.
 #'
 #' @param chia.obj A chia object to annotate.
-#' @param gene.symbols The symbols associated with the given values.
-#' @param values The values to associate the chia.obj with.
+#' @param values A named vector containing the values to associate the
+#'   chia.obj with. Each element should be named with a gene symbol.
 #' @param representative.only If true, only gene representative nodes are
 #'   associated with the given values.
 #' @param label The label the annotation should be given in the chia object.
 #'
 #' @return The ChIA object with the added annotation.
 #' @export
-add.gene.annotation <- function(chia.obj, gene.symbols, values, label, representative.only=TRUE) {
+add.gene.annotation <- function(chia.obj, values, label, representative.only=TRUE) {
     # Associate the values with their gene.
-    matched.values = values[match(chia.obj$Regions$SYMBOL, gene.symbols)]
+    matched.values = values[chia.obj$Regions$SYMBOL]
     
     # Only keep the values for gene representatives.
     if(representative.only) {
@@ -306,6 +306,13 @@ annotate.chia <- function(chia.obj, chia.param, output.dir=".", verbose=TRUE, sk
     chia.obj$Regions = as.data.frame(tmp)
   }
 
+  # Associate gene specific annotations.
+  if(!is.null(chia.param$gene.annotations)) {
+    for(gene.annotation in names(chia.param$gene.annotations)) {
+      chia.obj = add.gene.annotation(chia.obj, chia.param$gene.annotations[[gene.annotation]], gene.annotation)
+    }
+  }
+  
   # Associate components ids and sizes
   cat(date(), " : Associating components...\n",cat.sink)
   chia.obj = associate.components(chia.obj)
