@@ -352,7 +352,7 @@ analyze.chia.pet <- function(chia.obj, chia.params=NULL, output.dir=".", verbose
     analyze.generic.topology(chia.obj,  file.path.create(output.dir, "Topology"))
 
     cat(date(), " : Analyzing network components...\n",cat.sink)
-    analyze.components(chia.obj, output.dir)
+    analyze.components(chia.obj, output.dir, file.path.create(output.dir, "Components"))
     
     cat(date(), " : Analyzing genomic annotations...\n",cat.sink)
     analyze.annotation(chia.obj, chia.params, file.path.create(output.dir, "Genomic regions"))
