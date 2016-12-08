@@ -521,6 +521,23 @@ get.all.statistics <- function(chia.obj) {
     return(results)
 }
 
+#' Returns the shortest distances between a set of nodes and another one.
+#'
+#' @param chia.obj The ChIA object on which distances must be computed.
+#' @param from A vector of indices describing the starting nodes in the distance calculations.
+#' @param to A vector of indices describing the destination nodes in the distance calculations.
+#'
+#' @return A vector containing the distance from all "from" nodes to all "to" nodes.
+#' @export
+shortest.distance <- function(chia.obj, from, to) {
+  dist.mat = distances(chia.obj$Graph, v=which(from), to=which(to))
+  
+  # Get the shortest distance for all 'from' nodes to any 'to' nodes.
+  shortest.dist = apply(dist.mat, 1, min)
+  
+  return(shortest.dist)
+}
+
 #' Returns a summary of the distances between two sets of nodes.
 #'
 #' @param chia.obj The ChIA object on which distances must be computed.
@@ -538,7 +555,7 @@ summarize.distances <- function(chia.obj, from, to, max=3, values=FALSE) {
   dist.mat = distances(chia.obj$Graph, v=which(from), to=which(to))
   
   # Get the shortest distance for all 'from' nodes to any 'to' nodes.
-  shortest.dist = apply(dist.mat, 1, min)
+  shortest.dist = shortest.distance(chia.obj, from, to)
   
   # Create table of distancs.
   dist.table = table(shortest.dist)
