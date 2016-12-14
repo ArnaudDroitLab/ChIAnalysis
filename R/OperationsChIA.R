@@ -242,7 +242,16 @@ output.annotated.chia <- function(chia.obj, output.dir="output") {
 #' @return The ids of the edges to be removed.
 #' @export
 get.crossing.edges <- function(input.graph, method = igraph::cluster_fast_greedy, weight.attr=NULL){
-  communities <- method(as.undirected(input.graph), weights = weight.attr)
+  weights = NULL
+  if(!is.null(weight.attr)) {
+    if(weight.attr %in% names(edge_attr(input.graph))) {
+      weights = edge_attr(input.graph)[[weight.attr]]
+    } else {
+      warning("The provided weight attribute does not exist.")
+    }
+  }
+  
+  communities <- method(as.undirected(input.graph), weights = weights)
   to.delete = crossing(communities, input.graph)
   return(edge_attr(input.graph)$original.id[to.delete])
 }
