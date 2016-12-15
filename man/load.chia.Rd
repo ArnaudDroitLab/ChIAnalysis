@@ -4,10 +4,13 @@
 \alias{load.chia}
 \title{Read and load a ChIA-PET output file.}
 \usage{
-load.chia(input.chia)
+load.chia(input.chia, excluded.chr = c())
 }
 \arguments{
 \item{input.chia}{The path of the file containing the ChIA-PET data.}
+
+\item{excluded.chr}{Chromosomes to be excluded from the analysis, such as
+mitochondrial chromosomes.}
 }
 \value{
 A list of 4 elements: \describe{

@@ -92,6 +92,8 @@ vertex.attr.to.regions <- function(graph.obj) {
 #' Read and load a ChIA-PET output file.
 #'
 #' @param input.chia The path of the file containing the ChIA-PET data.
+#' @param excluded.chr Chromosomes to be excluded from the analysis, such as
+#'    mitochondrial chromosomes.
 #'
 #' @return A list of 4 elements: \describe{
 #' \item{$Left}{A \linkS4class{GRanges} object containing the information about the "left side" of the ChIA-PET data.}
@@ -104,10 +106,12 @@ vertex.attr.to.regions <- function(graph.obj) {
 #' @importFrom plyr summarize
 #'
 #' @export
-load.chia <- function(input.chia) {
+load.chia <- function(input.chia, excluded.chr=c()) {
     chia.raw = read.table(input.chia, sep="\t")
     chia.raw = chia.raw[,1:7]
     colnames(chia.raw) = c("L.chr", "L.start", "L.end", "R.chr", "R.start", "R.end", "Reads")
+    
+    chia.raw = chia.raw[!(chia.raw$L.chr %in% excluded.chr) & !(chia.raw$R.chr %in% excluded.chr),]
     
     # Separate and extend on both sides
     split.raw.chia <- function(chia.raw, columns, flank.size=0) {
