@@ -20,6 +20,22 @@ chia.right <- function(chia.obj) {
     return(chia.obj$Regions[as_edgelist(chia.obj$Graph)[,2],])
 }
 
+#' Return a data-frame representing all edges and the annotation of the 
+#' vertices it connects.
+#'
+#' @param chia.obj A list containing the ChIA-PET data, as returned by 
+#'   \code{\link{load.chia}}.
+#'
+#' @return A data-frame representing all edges of the graph and their annotation.
+#' @export
+get.annotated.edges <- function(chia.obj) {
+    left.df = as.data.frame(chia.left(chia.obj))
+    colnames(left.df) <- paste("Left", colnames(left.df), sep=".")
+    right.df = as.data.frame(chia.right(chia.obj))
+    colnames(right.df) <- paste("Right", colnames(right.df), sep=".")
+    return(data.frame(left.df, right.df))
+}
+
 #' Return the right part of the ChIA-PET data.
 #'
 #' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
