@@ -304,8 +304,8 @@ genomewide.expression.vs.network <- function(chia.obj, chia.params, output.dir) 
     in.chia.high.connect = expression.data$ENSEMBL %in% chia.obj$Regions$ENSEMBL[chia.obj$Regions$Gene.Representative & chia.obj$Regions$Degree >= 20]
     
     expression.data$In.ChIA = in.chia
-    expression.data$In.ChIA = in.chia.low.connect
-    expression.data$In.ChIA = in.chia.high.connect
+    expression.data$In.ChIA.Low = in.chia.low.connect
+    expression.data$In.ChIA.High = in.chia.high.connect
     
     plot.df = rbind(data.frame(Category="All", FPKM=expression.data$FPKM),
                     data.frame(Category="Outside of networks", FPKM=expression.data$FPKM[!in.chia]),
@@ -315,11 +315,30 @@ genomewide.expression.vs.network <- function(chia.obj, chia.params, output.dir) 
     plot.df$Category = factor(plot.df$Category, levels=c("All", "Outside of networks", "In networks (all)", "In networks (low connectivity)", "In networks (high connectivity)"))
                     
     plot.subset = plot.df[plot.df$Category %in% c("Outside of networks", "In networks (all)"),]
-    ggplot(plot.subset, aes(x=Category, y=log2(FPKM))) + geom_boxplot()
+    ggplot(plot.subset, aes(x=Category, y=FPKM)) + 
+        geom_boxplot() +
+        theme_bw() +
+        theme(axis.line = element_line(colour = "black"),
+              axis.text = element_text(color="black"),
+              axis.title = element_text(size=14),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank())
+
     ggsave(file.path(output.dir, "Expression inside networks vs outside networks.pdf"), width=7, height=7)
     
     plot.subset = plot.subset[plot.subset$FPKM >= 1,]
-    ggplot(plot.subset, aes(x=Category, y=log2(FPKM))) + geom_boxplot()
+    ggplot(plot.subset, aes(x=Category, y=FPKM)) + 
+        geom_boxplot() +
+        theme_bw() +
+        theme(axis.line = element_line(colour = "black"),
+              axis.text = element_text(color="black"),
+              axis.title = element_text(size=14),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              panel.background = element_blank())
     ggsave(file.path(output.dir, "Expression of active genes inside networks vs outside networks.pdf"), width=7, height=7)
     
     return(plot.df)
