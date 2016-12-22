@@ -34,8 +34,7 @@ coherence.test <- function(chia.obj, coherence.function, node.categories, m.hype
   # Calculate additional statistics
   coherence.df$Ratio = coherence.df[,2] / coherence.df[,1]
   coherence.df$Diff = coherence.df[,2] - coherence.df[,1]
-  coherence.df$Category = factor(rownames(coherence.df), rownames(coherence.df)[order(coherence.df$Diff)])
-
+  
   # Calculate a pValue with a hypergeometric test for each network
   # q = the number of coherent genes in the network
   # m = the number of coherent genes in total
@@ -66,11 +65,36 @@ coherence.test <- function(chia.obj, coherence.function, node.categories, m.hype
   # Remove categories which do not have at least two elements.
   coherence.df.subset = coherence.df[coherence.df[,1] + coherence.df[,2] > 1,]
   
+  scores = (pmax(coherence.df.subset[,2], coherence.df.subset[,1]))/(coherence.df.subset[,2]+coherence.df.subset[,1])
+  scores = ifelse(coherence.df.subset[,2] > coherence.df.subset[,1], scores, -scores)
+  coherence.df.subset$Score = scores
+  ordering = order(scores, -coherence.df.subset[,1], coherence.df.subset[,2])
+  coherence.df.subset$Category = factor(rownames(coherence.df.subset), rownames(coherence.df.subset)[ordering])
+  coherence.df.subset$Threshold = ifelse(scores <= -0.75, "Down", ifelse(scores >= 0.75, "Up", "Non-coherent"))
+  
   # Generate a plot representing the data.
+  ymin = -max(coherence.df.subset[,1])
+  ymax = max(coherence.df.subset[,2])
+  
+  ribbon.df = coherence.df.subset
+  ribbon.df$Category = as.numeric(ribbon.df$Category)
+  
   plot.obj = ggplot(coherence.df.subset, aes(x=Category)) +
-    geom_bar(mapping=aes(y=eval(parse(text=colnames(coherence.df)[2]))), stat="identity", fill="Blue", color="black") +
-    geom_bar(mapping=aes(y=eval(parse(text=paste0("-",colnames(coherence.df)[1])))), stat="identity", fill="Red", color="black") +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    geom_bar(mapping=aes(y=eval(parse(text=colnames(coherence.df)[2]))), stat="identity", fill="white", color=rgb(0, 0, 255, maxColorValue=255)) +
+    geom_bar(mapping=aes(y=eval(parse(text=paste0("-",colnames(coherence.df)[1])))), stat="identity", fill="white", color=rgb(255, 0, 0, maxColorValue=255)) +
+    geom_ribbon(data=ribbon.df, mapping=aes(x=Category, fill=Threshold, alpha=Threshold), ymin=ymin, ymax=ymax) +
+    scale_fill_manual(values=c(Down=rgb(39, 170, 225, maxColorValue=255), Up=rgb(39, 170, 225, maxColorValue=255), "Non-coherent"=rgb(255, 255, 225, maxColorValue=255))) +
+    scale_alpha_manual(values=c(Down=0.3, Up=0.3, "Non-coherent"=0)) +
+    labs(y="Gene attribute") +
+    theme_bw() +
+    theme(axis.line = element_line(colour = "black"),
+          axis.text = element_text(color="black"),
+          axis.text.x = element_text(angle = 90, hjust = 1),
+          axis.title = element_text(size=14),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          panel.background = element_blank())
   
   if(!is.null(output.file)) {
     ggsave(output.file, width=14, height=7, plot=plot.obj)
