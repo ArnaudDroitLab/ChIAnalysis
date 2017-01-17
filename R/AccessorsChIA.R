@@ -272,7 +272,7 @@ proportion.active.genes <- function(chia.obj) {
 #' @export
 get.tf <- function(chia.obj) {
     stopifnot(has.transcription.factors(chia.obj))
-    retval = chia.obj$Regions[,grepl("^TF", colnames(chia.obj$Regions))]
+    retval = chia.obj$Regions[,grepl("^TF", colnames(chia.obj$Regions)), drop=FALSE]
     colnames(retval) = get.tf.names(chia.obj)
     return(retval)
 }
@@ -308,7 +308,7 @@ get.polymerases <- function(chia.obj, overlap.threshold=0) {
 #' @export
 get.polymerases.percent <- function(chia.obj) {
     stopifnot(has.polymerases(chia.obj))
-    retval = chia.obj$Regions[,grepl("^POL", colnames(chia.obj$Regions))]
+    retval = chia.obj$Regions[,grepl("^POL", colnames(chia.obj$Regions)), drop=FALSE]
     colnames(retval) = get.polymerases.names(chia.obj)
     return(retval)
 }
@@ -343,7 +343,7 @@ get.histones <- function(chia.obj, overlap.threshold=0) {
 #' @export
 get.histones.percent <- function(chia.obj) {
     stopifnot(has.histone.marks(chia.obj))
-    retval = chia.obj$Regions[,grepl("^HIST", colnames(chia.obj$Regions))]
+    retval = chia.obj$Regions[,grepl("^HIST", colnames(chia.obj$Regions)), drop=FALSE]
     colnames(retval) = get.histones.names(chia.obj)
     return(retval)
 }
