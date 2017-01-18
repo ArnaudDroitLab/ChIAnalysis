@@ -32,10 +32,10 @@
 #'   element of the list should be a named vector, where each element is named
 #'   after the gene it annotates.
 #'
-#' @return An environment that can be passed to \code{\link{process.chia.pet}}, 
-#'   \code{\link{annotate.chia.pet}} or \code{\link{analyze.chia.pet}}.
+#' @return An environment that can be passed to \code{\link{process_chia_pet}}, 
+#'   \code{\link{annotate_chia.pet}} or \code{\link{analyze_chia_pet}}.
 #' @export
-build.chia.params <- function(input.chrom.state = NULL, biosample = NULL, genome.build = NULL, tf.regions = NULL,
+build_chia_params <- function(input.chrom.state = NULL, biosample = NULL, genome.build = NULL, tf.regions = NULL,
                              histone.regions = NULL, pol.regions = NULL, expression.data = NULL, tad.regions = NULL,
                              compartments.regions = NULL, tssRegion = c(-3000, 3000), centrality.measures=c("Degree"),
                              weight.attr=NULL, simple.chrom.state=NULL, genomic.regions=NULL, gene.annotations=NULL) {
@@ -75,9 +75,9 @@ build.chia.params <- function(input.chrom.state = NULL, biosample = NULL, genome
 #'
 #' @param chia.params The ChIA parameters object for which additional annotations must be fetched from ENCODE.
 #'
-#' @return An environment that can be passed to process.chia.pet, annotate.chia.pet or analyze.chia.pet.
+#' @return An environment that can be passed to process_chia_pet, annotate_chia.pet or analyze_chia_pet.
 #' @export
-add.encode.data <- function(chia.params) {
+add_encode_data <- function(chia.params) {
     biosample = chia.params$biosample
     genome.build = chia.params$genome.build
     

@@ -1,81 +1,81 @@
 #' Select all nodes which are gene representatives.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A subset of chia.obj containing only nodes which are gene representatives.
 #' @export
-select.gene.representative <- function(chia.obj) {
-    return(chia.vertex.subset(chia.obj, is.gene.representative(chia.obj)))
+select_gene_representative <- function(chia.obj) {
+    return(chia_vertex_subset(chia.obj, is_gene_representative(chia.obj)))
 }                   
 
 #' Select all nodes which are central.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A subset of chia.obj containing only nodes which are central.
 #' @export                   
-select.central.nodes <- function(chia.obj) {
-    return(chia.vertex.subset(chia.obj, chia.obj$Regions$Is.central))
+select_central_nodes <- function(chia.obj) {
+    return(chia_vertex_subset(chia.obj, chia.obj$Regions$Is.central))
 }
 
 #' Select all nodes which are in a factory.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A subset of chia.obj containing only nodes which are in a factory.
 #' @export                   
-select.factories <- function(chia.obj) {
-    return(chia.vertex.subset(chia.obj, chia.obj$Regions$Is.In.Factory))
+select_factories <- function(chia.obj) {
+    return(chia_vertex_subset(chia.obj, chia.obj$Regions$Is.In.Factory))
 }
 
 #' Generate a function which selects all nodes whose ID is present in the passed-in chia.obj.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A function which accepts a ChIA object and returns the subset of nodes whose
 #'   ID are in the ChIA object passed to this function.
 #' @export   
-select.from.chia.functor <- function(chia.obj) {
+select_from_chia_functor <- function(chia.obj) {
     force(chia.obj)
     return(function(x) {
-        return(chia.vertex.subset(x, x$Regions$ID %in% chia.obj$Regions$ID))
+        return(chia_vertex_subset(x, x$Regions$ID %in% chia.obj$Regions$ID))
     })
 }
 
 #' Select all nodes which are in the given components.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A subset of chia.obj containing only nodes which are in the given components.
 #' @export  
-select.by.components <- function(chia.obj, component.ids) {
-    return(chia.vertex.subset(chia.obj, chia.obj$Regions$Component.Id %in% component.ids))
+select_by_components <- function(chia.obj, component.ids) {
+    return(chia_vertex_subset(chia.obj, chia.obj$Regions$Component.Id %in% component.ids))
 }
 
-#' Generate a function similar to select.by.components where the components.ids parameter is bound.
+#' Generate a function similar to select_by_components where the components.ids parameter is bound.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A function which accepts a ChIA object and returns the subset of nodes whose
 #'   component is in component.ids.
 #' @export   
-select.by.component.functor <- function(component.ids) {
+select_by_component_functor <- function(component.ids) {
     force(component.ids)
     function(chia.obj) {
-        return(select.by.components(chia.obj, component.ids))
+        return(select_by_components(chia.obj, component.ids))
     }
 }
 
 #' Select all nodes in the components where the given genes are found.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #' @param genenames A vector fo gene names whose components should be selected.
 #'
 #' @return A subset fo chia.obj containing only the components of the given genes.
 #' @export   
-select.gene.component <- function(chia.obj, genenames) {
-    component.ids = get.gene.annotation(chia.obj, genenames)$Component.Id
-    return(select.by.components(chia.obj, component.ids))
+select_gene_component <- function(chia.obj, genenames) {
+    component.ids = get_gene_annotation(chia.obj, genenames)$Component.Id
+    return(select_by_components(chia.obj, component.ids))
 }
 
 regions.to.vertex.attr <- function(chia.obj) {
@@ -106,7 +106,7 @@ vertex.attr.to.regions <- function(graph.obj) {
 #' @importFrom plyr summarize
 #'
 #' @export
-load.chia <- function(input.chia, excluded.chr=c()) {
+load_chia <- function(input.chia, excluded.chr=c()) {
     chia.raw = read.table(input.chia, sep="\t")
     chia.raw = chia.raw[,1:7]
     colnames(chia.raw) = c("L.chr", "L.start", "L.end", "R.chr", "R.start", "R.end", "Reads")
@@ -123,19 +123,19 @@ load.chia <- function(input.chia, excluded.chr=c()) {
        return(GRanges(result))
     }
 
-    chia.left.ranges = split.raw.chia(chia.raw, 1:3)
-    chia.right.ranges = split.raw.chia(chia.raw, 4:6)
+    chia_left.ranges = split.raw.chia(chia.raw, 1:3)
+    chia_right.ranges = split.raw.chia(chia.raw, 4:6)
 
     # Reduce to a single set of coordinates
-    single.set = reduce(unlist(GRangesList(chia.left.ranges, chia.right.ranges)))
+    single.set = reduce(unlist(GRangesList(chia_left.ranges, chia_right.ranges)))
 
     # Build a graph.
     # Map back to original contact points
-    chia.left.indices = findOverlaps(chia.left.ranges, single.set, select="first")
-    chia.right.indices = findOverlaps(chia.right.ranges, single.set, select="first")
+    chia_left.indices = findOverlaps(chia_left.ranges, single.set, select="first")
+    chia_right.indices = findOverlaps(chia_right.ranges, single.set, select="first")
 
     # Find and remove self loops.
-    mapped.df = cbind(chia.raw, Left=chia.left.indices, Right=chia.right.indices)
+    mapped.df = cbind(chia.raw, Left=chia_left.indices, Right=chia_right.indices)
     mapped.df = mapped.df[mapped.df$Left != mapped.df$Right,]
 
     # Summarize multiple edges.
@@ -171,11 +171,11 @@ load.chia <- function(input.chia, excluded.chr=c()) {
 #'   \item The second set of files is made of components files. They group all interactions in a single component, with
 #'        an extra column containing the number of reads supporting the data. Their format is supported by Cytoscape.}
 #'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param output.dir The name of the directory where to save the files.
 #'
 #' @export
-output.annotated.chia <- function(chia.obj, output.dir="output") {
+output_annotated_chia <- function(chia.obj, output.dir="output") {
   # Create output directory if it does not exist.
   dir.create(output.dir, recursive = TRUE, showWarnings = FALSE)
 
@@ -185,9 +185,9 @@ output.annotated.chia <- function(chia.obj, output.dir="output") {
   write.table(chia.data, file = file.path(output.dir, "Annotated CHIA-PET regions.txt"), row.names = FALSE, sep = "\t", quote=FALSE)
 
   # Write out annotated interactions by concatening left and right annotations.
-  left.df = as.data.frame(chia.left(chia.obj))
+  left.df = as.data.frame(chia_left(chia.obj))
   colnames(left.df) <- paste("Left", colnames(left.df), sep=".")
-  right.df = as.data.frame(chia.right(chia.obj))
+  right.df = as.data.frame(chia_right(chia.obj))
   colnames(right.df) <- paste("Right", colnames(right.df), sep=".")
 
   write.table(data.frame(left.df, right.df), file=file.path(output.dir, "Interactions.txt"), sep="\t", col.names=TRUE, quote=FALSE)
@@ -245,7 +245,7 @@ output.annotated.chia <- function(chia.obj, output.dir="output") {
 #'
 #' @return The ids of the edges to be removed.
 #' @export
-get.crossing.edges <- function(input.graph, method = igraph::cluster_fast_greedy, weight.attr=NULL){
+get_crossing_edges <- function(input.graph, method = igraph::cluster_fast_greedy, weight.attr=NULL){
   weights = NULL
   if(!is.null(weight.attr)) {
     if(weight.attr %in% names(edge_attr(input.graph))) {
@@ -260,15 +260,15 @@ get.crossing.edges <- function(input.graph, method = igraph::cluster_fast_greedy
   return(edge_attr(input.graph)$original.id[to.delete])
 }
 
-#' Associates components ids and sizes to chia data, as returned by \code{\link{load.chia}}.
+#' Associates components ids and sizes to chia data, as returned by \code{\link{load_chia}}.
 #'
-#' @param chia.obj ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param split Should the data be divided into communities?
 #' @param oneByOne Sould the netwoks be treated one by one or as a whole?
 #' @param method What method sould be used to split data (ignored if split = \code{FALSE}).
 #' @return The annotated chia.obj.
 #' @export
-community.split <- function(chia.obj, oneByOne = FALSE, method = igraph::cluster_fast_greedy, weight.attr=NULL) {
+community_split <- function(chia.obj, oneByOne = FALSE, method = igraph::cluster_fast_greedy, weight.attr=NULL) {
   edge_attr(chia.obj$Graph)$original.id = 1:ecount(chia.obj$Graph)
   if (oneByOne){
     # Keep a record of edges marked for deletion, so that we can delete them all
@@ -282,7 +282,7 @@ community.split <- function(chia.obj, oneByOne = FALSE, method = igraph::cluster
       component.subgraph = induced_subgraph(chia.obj$Graph, components.out$membership==i)
 
       # Split it into communities and record teh deleted edges.
-      crossing.edges = get.crossing.edges(component.subgraph, method = method, weight.attr=weight.attr)
+      crossing.edges = get_crossing_edges(component.subgraph, method = method, weight.attr=weight.attr)
       marked.for.deletion = c(marked.for.deletion, crossing.edges)
     }
 
@@ -290,7 +290,7 @@ community.split <- function(chia.obj, oneByOne = FALSE, method = igraph::cluster
     chia.obj$Graph = delete_edges(chia.obj$Graph, marked.for.deletion)
   } else {
     # Split it into communities and delete the necessary edges.
-    crossing.edges = get.crossing.edges(chia.obj$Graph, method = method, weight.attr=weight.attr)
+    crossing.edges = get_crossing_edges(chia.obj$Graph, method = method, weight.attr=weight.attr)
     chia.obj$Graph = delete_edges(chia.obj$Graph, crossing.edges)
   }
 
@@ -301,8 +301,8 @@ community.split <- function(chia.obj, oneByOne = FALSE, method = igraph::cluster
   chia.obj$Regions$Degree = degree(chia.obj$Graph)
   
   # Also update components, if present.
-  if(has.components(chia.obj)) {
-    chia.obj = associate.components(chia.obj)
+  if(has_components(chia.obj)) {
+    chia.obj = associate_components(chia.obj)
   }
   return(chia.obj)
 }
@@ -314,7 +314,7 @@ community.split <- function(chia.obj, oneByOne = FALSE, method = igraph::cluster
 #'
 #' @return A chia object containing only the selected vertices.
 #' @export
-chia.vertex.subset <- function(chia.obj, indices) {
+chia_vertex_subset <- function(chia.obj, indices) {
     if(mode(indices) == "logical") {
       indices = which(indices)
     }
@@ -330,12 +330,12 @@ chia.vertex.subset <- function(chia.obj, indices) {
 #'
 #' @return A chia object containing only the selected vertices.
 #' @export
-chia.component.subset <- function(chia.obj, indices, min.selection=1) {
-    stopifnot(has.components(chia.obj))
+chia_component_subset <- function(chia.obj, indices, min.selection=1) {
+    stopifnot(has_components(chia.obj))
     
     selected.nodes.per.component = table(chia.obj$Regions$Component.Id[indices])
     selected.components = names(selected.nodes.per.component)[selected.nodes.per.component >= min.selection]
-    return(chia.vertex.subset(chia.obj, chia.obj$Regions$Component.Id %in% selected.components))
+    return(chia_vertex_subset(chia.obj, chia.obj$Regions$Component.Id %in% selected.components))
 }
 
 #' Applies a function to a set chia object subsets.
@@ -351,11 +351,11 @@ chia.component.subset <- function(chia.obj, indices, min.selection=1) {
 #'
 #' @return A list containing th results of the calls to chia.function.
 #' @export
-category.apply <- function(chia.obj, chia.function, node.categories, ...) {
+category_apply <- function(chia.obj, chia.function, node.categories, ...) {
   # Calculate metrics for all categories
   result.list = list()
   for(node.category in names(node.categories)) {
-    graph.subset = chia.vertex.subset(chia.obj, node.categories[[node.category]])
+    graph.subset = chia_vertex_subset(chia.obj, node.categories[[node.category]])
     result.list[[node.category]] = chia.function(graph.subset, ...)
   }
   
@@ -368,8 +368,8 @@ category.apply <- function(chia.obj, chia.function, node.categories, ...) {
 #' @param metric.function The metric function to apply to all components.
 #' @return A list containing the measures metrics for all components.
 #' @export
-apply.by.component <- function(chia.obj, metric.function, ...) {
-    return(category.apply(chia.obj, metric.function, categorize.by.component(chia.obj), ...))
+apply_by_component <- function(chia.obj, metric.function, ...) {
+    return(category_apply(chia.obj, metric.function, categorize_by_component(chia.obj), ...))
 }
 
 #' Apply a metric function returning a single metric to all components of a ChIA object,
@@ -379,9 +379,9 @@ apply.by.component <- function(chia.obj, metric.function, ...) {
 #' @param metric.name The name for the resulting combined metric.
 #' @return A list containing the measures metrics for all components.
 #' @export
-apply.single.metric.by.component <- function(metric.function, metric.name) {
+apply_single_metric_by_component <- function(metric.function, metric.name) {
     function(chia.obj) {
-        results = list(unlist(apply.by.component(chia.obj, function(x) { metric.function(x) })))
+        results = list(unlist(apply_by_component(chia.obj, function(x) { metric.function(x) })))
         names(results) = metric.name
         return(results)
     }
@@ -394,18 +394,18 @@ apply.single.metric.by.component <- function(metric.function, metric.name) {
 #' @param output.dir The name of the directory where output should be saved.
 #' @return The annotated chia.obj.
 #' @export
-process.chia.pet <- function(input.chia, chia.param, output.dir="output", verbose=TRUE) {
+process_chia_pet <- function(input.chia, chia.param, output.dir="output", verbose=TRUE) {
     # Create output directory.
     dir.create(file.path(output.dir), recursive=TRUE, showWarnings=FALSE)
 
     # Load interaction data.
-    chia.obj = load.chia(input.chia)
+    chia.obj = load_chia(input.chia)
 
     # Annotate the ChIA object.
-    chia.obj <- annotate.chia(chia.obj, chia.param, output.dir=output.dir, verbose=verbose)
+    chia.obj <- annotate_chia(chia.obj, chia.param, output.dir=output.dir, verbose=verbose)
 
     # Analyze the ChIA network.
-    analyze.chia.pet(chia.obj, output.dir)
+    analyze_chia_pet(chia.obj, output.dir)
 
     # Return teh created object.
 	return(chia.obj)
@@ -419,8 +419,8 @@ process.chia.pet <- function(input.chia, chia.param, output.dir="output", verbos
 #'
 #' @return A subsetted chia object containing only the gene networks.
 #' @export
-select.gene.networks <- function(chia.obj, min.gene=2) {
-    return(chia.vertex.subset(chia.obj, regions.in.gene.network(chia.obj, min.gene)))
+select_gene_networks <- function(chia.obj, min.gene=2) {
+    return(chia_vertex_subset(chia.obj, regions_in_gene_network(chia.obj, min.gene)))
 }
 
 #' Returns a subset of a ChIA object containing only nodes with the specified 
@@ -432,8 +432,8 @@ select.gene.networks <- function(chia.obj, min.gene=2) {
 #' @return A subset of the ChIA object containing only nodes with the specified 
 #'   transcription factors.
 #' @export
-select.by.tf <- function(chia.obj, tf.names) {
-    select.by.chip.generic(chia.obj, tf.names, nodes.with.tf)
+select_by_tf <- function(chia.obj, tf.names) {
+    select_by_chip.generic(chia.obj, tf.names, nodes_with_tf)
 }
 
 #' Returns a subset of a ChIA object containing only nodes with the specified 
@@ -445,8 +445,8 @@ select.by.tf <- function(chia.obj, tf.names) {
 #' @return A subset of the ChIA object containing only nodes with the specified 
 #'   polymerases.
 #' @export
-select.by.polymerase <- function(chia.obj, polymerase.names) {
-    select.by.chip.generic(chia.obj, polymerase.names, nodes.with.polymerases)
+select_by_polymerase <- function(chia.obj, polymerase.names) {
+    select_by_chip.generic(chia.obj, polymerase.names, nodes_with_polymerases)
 }
 
 #' Returns a subset of a ChIA object containing only nodes with the specified 
@@ -458,8 +458,8 @@ select.by.polymerase <- function(chia.obj, polymerase.names) {
 #' @return A subset of the ChIA object containing only nodes with the specified 
 #'   histone marks.
 #' @export
-select.by.histone <- function(chia.obj, histone.names) {
-    select.by.chip.generic(chia.obj, histone.names, nodes.with.histones)
+select_by_histone <- function(chia.obj, histone.names) {
+    select_by_chip.generic(chia.obj, histone.names, nodes_with_histones)
 }
 
 #' Returns a subset of a ChIA object containing only nodes with the specified 
@@ -471,12 +471,12 @@ select.by.histone <- function(chia.obj, histone.names) {
 #' @return A subset of the ChIA object containing only nodes with the specified 
 #'   ChIPs.
 #' @export
-select.by.chip <- function(chia.obj, chip.names) {
-    select.by.chip.generic(chia.obj, chip.names, nodes.with.chip)
+select_by_chip <- function(chia.obj, chip.names) {
+    select_by_chip.generic(chia.obj, chip.names, nodes_with_chip)
 }
 
-select.by.chip.generic <- function(chia.obj, chip.names, nodes.with.function) {
-    chia.vertex.subset(chia.obj, nodes.with.function(chia.obj, chip.names))
+select_by_chip.generic <- function(chia.obj, chip.names, nodes.with.function) {
+    chia_vertex_subset(chia.obj, nodes.with.function(chia.obj, chip.names))
 }
 
 
@@ -494,7 +494,7 @@ select.by.chip.generic <- function(chia.obj, chip.names, nodes.with.function) {
 #' @return A contracted ChIA object.
 #' @import igraph
 #' @export
-chia.contract <- function(chia.obj, indices) {
+chia_contract <- function(chia.obj, indices) {
     # Get the vertex IDs we're going to keep.
     kept.ids = paste0("ChIA-", as.character(chia.obj$Regions$ID[indices]))
     graph.obj = chia.obj$Graph

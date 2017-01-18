@@ -3,12 +3,12 @@
 #' Analyzes ChIA-PET data and produces graphs according to its chromatin states.
 #'
 #' @param chia.obj A list containing the annotated ChIA-PET data, as returned
-#'    by \code{\link{annotate.chia}}
+#'    by \code{\link{annotate_chia}}
 #' @param chia.params Original chia.params used to build chia.obj, used to 
 #'    determine genomic backgrounds.
 #' @param output.dir The name of the directory where to save the graphs.
 analyze.chromatin.states <- function(chia.obj, chia.params=NULL, output.dir="output") {
-    if(!has.chrom.state(chia.obj)) {
+    if(!has_chrom_state(chia.obj)) {
         warning("No chromatin states to analyze!")
     } else {
         facet.col = c("Chrom.State"=6, "Simple.Chrom.State"=2)
@@ -20,18 +20,18 @@ analyze.chromatin.states <- function(chia.obj, chia.params=NULL, output.dir="out
                         file.path(output.dir, paste0(cs, " summary.txt")), sep="\t", col.names=TRUE, row.names=FALSE, quote=FALSE)
 
             # Plot proportions of chromatin states as a function of connectivity.
-            connectivity.df <- categorize.by.connectivity(chia.obj)
-            chia.plot.metrics(chia.obj, level.counts, connectivity.df, "Connectivity", "Proportion of nodes in category",
+            connectivity.df <- categorize_by_connectivity(chia.obj)
+            chia_plot_metrics(chia.obj, level_counts, connectivity.df, "Connectivity", "Proportion of nodes in category",
                          graph.type = "line", facet.cols = facet.col[cs],
                          file.out = file.path(output.dir, paste0("Proportion of ", cs, " as a function of connectivity category.pdf")),
                          variable.name = cs)
                          
-            # Generate contact heatmaps.
-            contact.heatmap(chia.obj, cs, cs, output.dir=output.dir)
+            # Generate contact_heatmaps.
+            contact_heatmap(chia.obj, cs, cs, output.dir=output.dir)
             
-            if(has.components(chia.obj)) {
-                size.categories <- categorize.by.components.size(chia.obj)
-                chia.plot.metrics(chia.obj, level.counts, size.categories, 
+            if(has_components(chia.obj)) {
+                size.categories <- categorize_by_components_size(chia.obj)
+                chia_plot_metrics(chia.obj, level_counts, size.categories, 
                   x.lab = "Size category", y.lab = "Proportion",
                   graph.type = "line", facet.cols = facet.col[cs],
                   file.out = file.path(output.dir, paste0("Proportion of ", cs, " as a function of size category.pdf")),
@@ -40,7 +40,7 @@ analyze.chromatin.states <- function(chia.obj, chia.params=NULL, output.dir="out
             
             if(!is.null(chia.params)) {
                 # Chromatin state enrichment of the whole network.
-                region.enrichment(get.granges(chia.obj), 
+                region.enrichment(get_granges(chia.obj), 
                                   chia.params[[param.name[cs] ]], 
                                   file.out=file.path(output.dir, paste0(cs, " enrichment of regions in network.pdf")))
             }
@@ -53,28 +53,28 @@ analyze.chromatin.states <- function(chia.obj, chia.params=NULL, output.dir="out
 #' Analyzes ChIA-PET data and produces graphs according to the available annotation.
 #'
 #' @param chia.obj A list containing the annotated ChIA-PET data, as returned 
-#'    by \code{\link{annotate.chia}}
+#'    by \code{\link{annotate_chia}}
 #' @param chia.params Original chia.params used to build chia.obj, used to 
 #'    determine genomic backgrounds.
 #' @param output.dir The name of the directory where to save the graphs.
 analyze.annotation <- function(chia.obj, chia.params=NULL, output.dir="output") {
-    if(!has.gene.annotation(chia.obj)) {
+    if(!has_gene_annotation(chia.obj)) {
         warning("No gene annotation to analyze!")
     } else {
         # Plot genomic region s connectivity.
-        connectivity.df <- categorize.by.connectivity(chia.obj)
-        chia.plot.metrics(chia.obj, level.counts, connectivity.df, "Connectivity", "Proportion of nodes in category",
+        connectivity.df <- categorize_by_connectivity(chia.obj)
+        chia_plot_metrics(chia.obj, level_counts, connectivity.df, "Connectivity", "Proportion of nodes in category",
                    graph.type = "line", facet.rows = 3, facet.cols = 3,
                    file.out = file.path(output.dir, "Proportion of genomic location as a function of connectivity category.pdf"),
                    variable.name = "Simple.annotation")
         
         # Plot genomic region contact map.
-        contact.heatmap(chia.obj, "Simple.annotation", "genomic location", output.dir)
+        contact_heatmap(chia.obj, "Simple.annotation", "genomic location", output.dir)
         
         # Plot genomic region vs component size.
-        if(has.components(chia.obj)) {
-            size.categories <- categorize.by.components.size(chia.obj)
-            chia.plot.metrics(chia.obj, level.counts, size.categories,
+        if(has_components(chia.obj)) {
+            size.categories <- categorize_by_components_size(chia.obj)
+            chia_plot_metrics(chia.obj, level_counts, size.categories,
                  x.lab = "Size category", y.lab = "Proportion", graph.type = "line", facet.rows = 3,
                  file.out = file.path(output.dir, "Proportion of genomic location as a function of size category.pdf"),
                  variable.name = "Simple.annotation", proportion = TRUE)
@@ -82,7 +82,7 @@ analyze.annotation <- function(chia.obj, chia.params=NULL, output.dir="output") 
         
         # Perform network regions enrichment within genomic regions.
         if(!is.null(chia.params)) {
-            region.enrichment(get.granges(chia.obj), 
+            region.enrichment(get_granges(chia.obj), 
                               chia.params$genomic.regions, 
                               file.out=file.path(output.dir, "Genomic region enrichment of regions in networks.pdf"))         
         }
@@ -93,17 +93,17 @@ analyze.annotation <- function(chia.obj, chia.params=NULL, output.dir="output") 
 #'
 #' Produce a plot to the expression of a node according to its degree.
 #'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param output.dir The name of the directory where to save the graphs.
 analyze.expression <- function(chia.obj, chia.params=NULL, output.dir="output") {
-    if(!(has.degree(chia.obj) && has.expression.levels(chia.obj))) {
+    if(!(has_degree(chia.obj) && has_expression_levels(chia.obj))) {
         warning("No expression levels to analyze!")
     } else {
         # Plot expression as a function of connectivity.
         log.expression = function(x) {
             log2(x$Regions$Expr.mean[x$Regions$Gene.Representative]+1)
         }
-        chia.plot.metrics(chia.obj, log.expression, categorize.by.connectivity(chia.obj), graph.type="boxplot", 
+        chia_plot_metrics(chia.obj, log.expression, categorize_by_connectivity(chia.obj), graph.type="boxplot", 
                           file.out=file.path(output.dir, "Boxplot of expression as a function of connectivity.pdf"))
 
         # Plot expression inside network vs outside network.
@@ -119,10 +119,10 @@ analyze.expression <- function(chia.obj, chia.params=NULL, output.dir="output") 
 #' \item{Tau vs degree.pdf}{A plot of the Tau of the nodes according to their degree.}
 #' \item{Boxplot of degrees by expression category.pdf}{A boxplot the degrees of the nodes in each expression category.}}
 #'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param output.dir The name of the directory where to save the graphs.
 analyze.gene.specificity <- function(chia.obj, output.dir="output") {
-    if(!has.gene.specificity(chia.obj)) {
+    if(!has_gene_specificity(chia.obj)) {
         warning("No gene specificity to analyze!")
     } else {
         # Plot Tau and category vs degree
@@ -159,15 +159,15 @@ chip.enrichment.vs.background <- function(all.chip, output.dir, suffix) {
 #' Produce a plot of the presence of TF at the connection points of ChIA-PET data, according to the
 #' connectivity of the nodes.
 #'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param output.dir The name of the directory where to save the graphs.
 #'
 #' @importFrom reshape2 melt
 analyze.tf <- function(chia.obj, chia.params=NULL, output.dir="output") {
-    if(has.transcription.factors(chia.obj)) {
+    if(has_transcription_factors(chia.obj)) {
         # Plot TF/chip presence against node connectivity.
-        connectivity.df <- categorize.by.connectivity(chia.obj)
-        metrics = chia.plot.metrics(chia.obj, metric.function=get.all.chip.proportion, 
+        connectivity.df <- categorize_by_connectivity(chia.obj)
+        metrics = chia_plot_metrics(chia.obj, metric.function=get_all_chip_proportion, 
                                     node.categories=connectivity.df, graph.type="line", 
                                     file.out=file.path(output.dir, "TF presence on contact point by connectivity.pdf"))
         write.table(metrics$Metrics, file=file.path(output.dir, "TF presence on contact point by connectivity.txt"), 
@@ -180,8 +180,8 @@ analyze.tf <- function(chia.obj, chia.params=NULL, output.dir="output") {
             chip.enrichment.vs.background(all.chip, output.dir, "(All)")
             
             in.network.chip = GRangesList()
-            for(chip in get.chips.names(chia.obj)) {
-                in.network.chip[[chip]] = get.granges(select.by.chip(chia.obj, chip))
+            for(chip in get_chips_names(chia.obj)) {
+                in.network.chip[[chip]] = get_granges(select_by_chip(chia.obj, chip))
             }
             chip.enrichment.vs.background(in.network.chip, output.dir, "(In network)")
         }
@@ -194,18 +194,18 @@ analyze.tf <- function(chia.obj, chia.params=NULL, output.dir="output") {
 #'
 #' Analyzes ChIA-PET data and produces graphs according to the topology of the nodes in the whole set
 #' of regions and in the separated components: \describe{
-#' \item{Log2(size of component) vs Log2(Number of components).pdf}{A plot of the number of components according to the size of the components.}
+#' \item{Log2(size of component) vs Log2(Number of components).pdf}{A plot of the number_of_components according to the size of the components.}
 #' \item{Component table.txt}{A file with the information about TSS for each component.}
 #' \item{Proportion of TSS in low connectivity nodes.pdf}{A plot of the proportion of TSS in nodes with low connectivity (component with 5 nodes or less).}
 #' \item{Proportion of TSS in high connectivity nodes.pdf}{A plot of the proportion of TSS in nodes with high connectivity (component with more than 5 nodes).}}
 #'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param output.dir The name of the directory where to save the graphs.
 #'
 #' @export
-analyze.components <- function(chia.obj, output.dir="output") {
+analyze_components <- function(chia.obj, output.dir="output") {
   # Analyze components
-  if(has.components(chia.obj)) {
+  if(has_components(chia.obj)) {
     component.table <- chia.obj$Regions[,c("Component.Id", "Component.size")]
     component.df <- data.frame(Size = unique(component.table)$Component.size, Number = 1)
     component.df <- aggregate(Number~Size, data = component.df, FUN = sum)
@@ -238,10 +238,10 @@ analyze.components <- function(chia.obj, output.dir="output") {
     ggplot(subset(component.table, Size >5), aes(x=NumberOfTSS/Size)) + geom_histogram()
     ggsave(file.path(output.dir, "Proportion of TSS in high connectivity nodes.pdf"))
     
-    if(has.gene.annotation(chia.obj)) {
-        tss.metric.function <- functor.constructor(boolean.count, "Is.TSS", proportion=TRUE)
-        chia.plot.metrics(chia.obj, apply.single.metric.by.component(tss.metric.function, "TSS proportion"),
-                          categorize.by.components.size(chia.obj), graph.type="boxplot",
+    if(has_gene_annotation(chia.obj)) {
+        tss.metric.function <- functor_constructor(boolean_count, "Is.TSS", proportion=TRUE)
+        chia_plot_metrics(chia.obj, apply_single_metric_by_component(tss.metric.function, "TSS proportion"),
+                          categorize_by_components_size(chia.obj), graph.type="boxplot",
                           file.out=file.path(output.dir, "Boxplot of the proportion of TSS in fonction of the size of the networks.pdf"))
     }
   }
@@ -254,12 +254,12 @@ analyze.components <- function(chia.obj, output.dir="output") {
 #' \item{Histogram of number of edges.pdf}{Histogram of the number of edges in the whole set of data.}
 #' \item{Scatter plot of degrees of the left node versus the right node.pdf}{Scatter plot showing the relation between the left and right vertices' degree.}
 #' \item{Degree vs cluster width.pdf}{A plot of the degree of the nodes in one cluster according to the size of its cluster.}
-#' \item{Log2(size of component) vs Log2(Number of components).pdf}{A plot of the number of components according to the size of the components.}
+#' \item{Log2(size of component) vs Log2(Number of components).pdf}{A plot of the number_of_components according to the size of the components.}
 #' \item{Component table.txt}{A file with the information about TSS for each component.}
 #' \item{Proportion of TSS in low connectivity nodes.pdf}{A plot of the proportion of TSS in nodes with low connectivity (component with 5 nodes or less).}
 #' \item{Proportion of TSS in high connectivity nodes.pdf}{A plot of the proportion of TSS in nodes with high connectivity (component with more than 5 nodes).}}
 #'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param output.dir The name of the directory where to save the graphs.
 #'
 analyze.generic.topology <- function(chia.obj, output.dir="output") {
@@ -286,26 +286,26 @@ analyze.generic.topology <- function(chia.obj, output.dir="output") {
 
 #' Performs all possible analysis regarding the central nodes.
 #'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param output.dir The directory where output should be saved.
 #'
 #' @export
-analyze.central.nodes <- function(chia.obj, output.dir=".") {
-  if(has.centrality(chia.obj)) {
-    centrality.categories <- categorize.by.centrality(chia.obj)
+analyze_central_nodes <- function(chia.obj, output.dir=".") {
+  if(has_centrality(chia.obj)) {
+    centrality.categories <- categorize_by_centrality(chia.obj)
   
-    if(has.chrom.state(chia.obj)) {
-      chia.plot.metrics(chia.obj, level.counts, centrality.categories, graph.type = "heatmap",
+    if(has_chrom_state(chia.obj)) {
+      chia_plot_metrics(chia.obj, level_counts, centrality.categories, graph.type = "heatmap",
                    file.out = file.path(output.dir, "Heatmap of centrality vs chromatin states.pdf"), variable.name = "Chrom.State")
     }
     
-    if(has.gene.annotation(chia.obj)) {
-      chia.plot.metrics(chia.obj, level.counts, centrality.categories, graph.type = "heatmap",
+    if(has_gene_annotation(chia.obj)) {
+      chia_plot_metrics(chia.obj, level_counts, centrality.categories, graph.type = "heatmap",
                    file.out = file.path(output.dir, "Heatmap of centrality vs genomic locations.pdf"), variable.name = "Simple.annotation")
     }
     
-    if(has.transcription.factors(chia.obj)) {
-      results = chia.plot.metrics(chia.obj, calculate.tf.presence, centrality.categories, graph.type = "heatmap",
+    if(has_transcription_factors(chia.obj)) {
+      results = chia_plot_metrics(chia.obj, calculate_tf_presence, centrality.categories, graph.type = "heatmap",
         x.lab = "Centrality category", y.lab = "Proportion", 
         file.out = file.path(output.dir, "Proportion of TF as a function of centrality.pdf"),
         proportion = TRUE)
@@ -318,13 +318,13 @@ analyze.central.nodes <- function(chia.obj, output.dir=".") {
 
 #' Performs analyses which do not fit in any of the other sub-analyses.
 #'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param output.dir The directory where output should be saved.
 #'
 #' @export
-analyze.misc <- function(chia.obj, output.dir=".") {
-    if(has.fitness(chia.obj)) {
-        chia.plot.metrics(chia.obj, subset.counts, categorize.by.connectivity(chia.obj), x.lab = "Connectivity",
+analyze_misc <- function(chia.obj, output.dir=".") {
+    if(has_fitness(chia.obj)) {
+        chia_plot_metrics(chia.obj, subset_counts, categorize_by_connectivity(chia.obj), x.lab = "Connectivity",
                           graph.type = "histogram", file.out = file.path(output.dir, "Histogram of the number of essential genes by connectivity category.pdf"),
                           all.conditions = "(Gene.Representative & (Fitness > 0.5))", proportion = FALSE)
     }
@@ -332,7 +332,7 @@ analyze.misc <- function(chia.obj, output.dir=".") {
 
 #' Performs all possible analysis steps on a ChIA-PET object.
 #'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param chia.params The chia.params object which was used to annotate this one. Used
 #'   for calculating in-network TF/chromatin state enrichments vs the entire genome.
 #' @param output.dir The directory where output should be saved.
@@ -340,19 +340,19 @@ analyze.misc <- function(chia.obj, output.dir=".") {
 #' @param label The label to add to the heatmap title (name of the variable).
 #'
 #' @export
-analyze.chia.pet <- function(chia.obj, chia.params=NULL, output.dir=".", verbose=TRUE) {
+analyze_chia_pet <- function(chia.obj, chia.params=NULL, output.dir=".", verbose=TRUE) {
     # If verbose output is turned off, redirect output to a NULL stream.
     cat.sink = ifelse(verbose, "", textConnection(NULL, w))
 
     # Output the results of the annotation.
-    output.annotated.chia(chia.obj, output.dir)
+    output_annotated_chia(chia.obj, output.dir)
 
     # Perform further in-depth analysis of the networks.
     cat(date(), " : Analyzing network topologies...\n",cat.sink)
     analyze.generic.topology(chia.obj,  file.path.create(output.dir, "Topology"))
 
     cat(date(), " : Analyzing network components...\n",cat.sink)
-    analyze.components(chia.obj, file.path.create(output.dir, "Components"))
+    analyze_components(chia.obj, file.path.create(output.dir, "Components"))
     
     cat(date(), " : Analyzing genomic annotations...\n",cat.sink)
     analyze.annotation(chia.obj, chia.params, file.path.create(output.dir, "Genomic regions"))
@@ -370,10 +370,10 @@ analyze.chia.pet <- function(chia.obj, chia.params=NULL, output.dir=".", verbose
     analyze.gene.specificity(chia.obj, file.path.create(output.dir, "Expression"))
 
     cat(date(), " : Analyzing central nodes...\n",cat.sink)
-    analyze.central.nodes(chia.obj, output.dir)
+    analyze_central_nodes(chia.obj, output.dir)
     
     cat(date(), " : Analyzing miscellaneous...\n",cat.sink)
-    analyze.misc(chia.obj, output.dir)
+    analyze_misc(chia.obj, output.dir)
     
     # Close dummy verbose stream.
     if(!verbose) {

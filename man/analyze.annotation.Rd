@@ -8,7 +8,7 @@ analyze.annotation(chia.obj, chia.params = NULL, output.dir = "output")
 }
 \arguments{
 \item{chia.obj}{A list containing the annotated ChIA-PET data, as returned 
-by \code{\link{annotate.chia}}}
+by \code{\link{annotate_chia}}}
 
 \item{chia.params}{Original chia.params used to build chia.obj, used to 
 determine genomic backgrounds.}

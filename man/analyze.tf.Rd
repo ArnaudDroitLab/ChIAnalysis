@@ -9,7 +9,7 @@ connectivity of the nodes.}
 analyze.tf(chia.obj, chia.params = NULL, output.dir = "output")
 }
 \arguments{
-\item{chia.obj}{A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.}
+\item{chia.obj}{A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.}
 
 \item{output.dir}{The name of the directory where to save the graphs.}
 }

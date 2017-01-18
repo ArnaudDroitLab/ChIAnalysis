@@ -1,22 +1,22 @@
 #' Return the left part of the ChIA-PET data.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A \linkS4class{GRanges} object with the \code{Regions} from the "\code{chia.obj}" parameter corresponding the the "left side".
 #' of the original data.
 #' @export
-chia.left <- function(chia.obj) {
+chia_left <- function(chia.obj) {
     return(chia.obj$Regions[as_edgelist(chia.obj$Graph)[,1],])
 }
 
 #' Return the right part of the ChIA-PET data.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A \linkS4class{GRanges} object with the \code{Regions} from the "\code{chia.obj}" parameter corresponding the the "right side".
 #' of the original data.
 #' @export
-chia.right <- function(chia.obj) {
+chia_right <- function(chia.obj) {
     return(chia.obj$Regions[as_edgelist(chia.obj$Graph)[,2],])
 }
 
@@ -24,56 +24,56 @@ chia.right <- function(chia.obj) {
 #' vertices it connects.
 #'
 #' @param chia.obj A list containing the ChIA-PET data, as returned by 
-#'   \code{\link{load.chia}}.
+#'   \code{\link{load_chia}}.
 #'
 #' @return A data-frame representing all edges of the graph and their annotation.
 #' @export
-get.annotated.edges <- function(chia.obj) {
-    left.df = as.data.frame(chia.left(chia.obj))
+get_annotated_edges <- function(chia.obj) {
+    left.df = as.data.frame(chia_left(chia.obj))
     colnames(left.df) <- paste("Left", colnames(left.df), sep=".")
-    right.df = as.data.frame(chia.right(chia.obj))
+    right.df = as.data.frame(chia_right(chia.obj))
     colnames(right.df) <- paste("Right", colnames(right.df), sep=".")
     return(data.frame(left.df, right.df))
 }
 
 #' Return the right part of the ChIA-PET data.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A \linkS4class{GRanges} object with the \code{Regions} from the "\code{chia.obj}" parameter corresponding the the "right side".
 #' of the original data.
 #' @export
-get.granges <- function(chia.obj) {
+get_granges <- function(chia.obj) {
     return(GRanges(chia.obj$Regions))
 }
 
 #' Determines if the given chia.obj has associated chromatin states.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return True if the object has associated chromatin states.
 #' @export
-has.chrom.state <- function(chia.obj) {
+has_chrom_state <- function(chia.obj) {
     return(!is.null(chia.obj$Regions$Chrom.State))
 }
 
 #' Determines if the given chia.obj has associated components.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return True if the object has associated components.
 #' @export
-has.components <- function(chia.obj) {
+has_components <- function(chia.obj) {
     return(!is.null(chia.obj$Regions$Component.Id) && !is.null(chia.obj$Regions$Component.size))
 }
 
 #' Determines if the given chia.obj has associated gene specificities.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return True if the object has associated gene specificities.
 #' @export
-has.gene.specificity <- function(chia.obj) {
+has_gene_specificity <- function(chia.obj) {
     return(!is.null(chia.obj$Regions$Gene.Representative) &&
            !is.null(chia.obj$Regions$Expression.Tau) &&
            !is.null(chia.obj$Regions$Expression.Category))
@@ -81,210 +81,210 @@ has.gene.specificity <- function(chia.obj) {
 
 #' Determines if the given chia.obj has associated node degrees.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return True if the object has associated node degrees.
 #' @export
-has.degree <- function(chia.obj) {
+has_degree <- function(chia.obj) {
     return(!is.null(chia.obj$Regions$Degree))
 }
 
 #' Determines if the given chia.obj has associated gene representatives.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return True if the object has associated gene representatives.
 #' @export
-has.gene.representative <- function(chia.obj) {
+has_gene_representative <- function(chia.obj) {
     return(!is.null(chia.obj$Regions$Gene.Representative))
 }
 
 #' Determines if the given chia.obj has associated expression levels.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return True if the object has associated expression levels.
 #' @export
-has.expression.levels <- function(chia.obj) {
+has_expression_levels <- function(chia.obj) {
     return(!is.null(chia.obj$Regions$Gene.Representative) &&
            !is.null(chia.obj$Regions$Expr.mean))
 }
 
 #' Determines if the given chia.obj has associated gene annotations.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return True if the object has associated gene annotations.
 #' @export
-has.gene.annotation <- function(chia.obj) {
+has_gene_annotation <- function(chia.obj) {
     return(!is.null(chia.obj$Regions$Simple.annotation))
 }
 
 #' Determines if the given chia.obj has associated node centralities.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return True if the object has associated node centralities.
 #' @export
-has.centrality <- function(chia.obj) {
+has_centrality <- function(chia.obj) {
     return(!is.null(chia.obj$Regions$Is.central))
 }
 
 #' Determines if the given chia.obj has TF binding information.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return True if the object has TF binding information.
 #' @export
-has.transcription.factors <- function(chia.obj) {
+has_transcription_factors <- function(chia.obj) {
     return(sum(grepl("^TF", colnames(chia.obj$Regions))) > 0)
 }
 
 #' Determines if the given chia.obj has polymerase binding information.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return True if the object has polymerase binding information.
 #' @export
-has.polymerases <- function(chia.obj) {
+has_polymerases <- function(chia.obj) {
     return(sum(grepl("^POL", colnames(chia.obj$Regions))) > 0)
 }
 
-#' Determines if the given chia.obj has histone marks binding information.
+#' Determines if the given chia.obj has_histone_marks binding information.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
-#' @return True if the object has histone marks binding information.
+#' @return True if the object has_histone_marks binding information.
 #' @export
-has.histone.marks <- function(chia.obj) {
+has_histone_marks <- function(chia.obj) {
     return(sum(grepl("^HIST", colnames(chia.obj$Regions))) > 0)
 }
 
 #' Determines if the given chia.obj has TF binding information.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return True if the object has TF binding information.
 #' @export
-has.fitness <- function(chia.obj) {
+has_fitness <- function(chia.obj) {
     return(!is.null(chia.obj$Regions$Fitness))
 }
 
-#' Return the number of nodes in a CHIA object.
+#' Return the number_of_nodes in a CHIA object.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
-#' @return The number of nodes in the chia object.
+#' @return The number_of_nodes in the chia object.
 #' @export
-number.of.nodes <- function(chia.obj) {
+number_of_nodes <- function(chia.obj) {
     node.count = vcount(chia.obj$Graph)
     stopifnot(nrow(chia.obj$Regions) == node.count)
 
     return(vcount(chia.obj$Graph))
 }
 
-#' Return the number of contacts in a CHIA object.
+#' Return the number_of_contacts in a CHIA object.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
-#' @return The number of contacts in the chia object.
+#' @return The number_of_contacts in the chia object.
 #' @export
-number.of.contacts <- function(chia.obj) {
+number_of_contacts <- function(chia.obj) {
     return(ecount(chia.obj$Graph))
 }
 
-#' Return the number of components in a CHIA object.
+#' Return the number_of_components in a CHIA object.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
-#' @return The number of components in the chia object.
+#' @return The number_of_components in the chia object.
 #' @export
-number.of.components <- function(chia.obj) {
+number_of_components <- function(chia.obj) {
     return(components(chia.obj$Graph)$no)
 }
 
 #' Return the mean component size of a CHIA object.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return The mean component size of the chia object.
 #' @export
-average.component.size <- function(chia.obj) {
+average_component_size <- function(chia.obj) {
     return(mean(components(chia.obj$Graph)$csize))
 }
 
-#' Return the number of genes represented in a CHIA object.
+#' Return the number_of_genes represented in a CHIA object.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
-#' @return The number of genes represented in the chia object.
+#' @return The number_of_genes represented in the chia object.
 #' @export
-number.of.genes <- function(chia.obj) {
+number_of_genes <- function(chia.obj) {
     return(sum(chia.obj$Regions$Gene.Representative))
 }
 
 #' Return the number of active genes represented in a CHIA object.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return The number of active genes represented in the chia object.
 #' @export
-number.active.genes <- function(chia.obj) {
+number_active_genes <- function(chia.obj) {
     return(sum(chia.obj$Regions$Gene.Representative & chia.obj$Regions$Is.Gene.Active))
 }
 
 #' Return the number genes per component in the CHIA object.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return The number of active genes represented in the chia object.
 #' @export
-genes.by.component <- function(chia.obj) {
-    stopifnot(has.gene.representative(chia.obj) && has.components(chia.obj))
+genes_by_component <- function(chia.obj) {
+    stopifnot(has_gene_representative(chia.obj) && has_components(chia.obj))
     return(aggregate(Gene.Representative~Component.Id, as.data.frame(chia.obj$Regions), sum))
 }
 
 #' Return the proportion of nodes representing genes in a CHIA object.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return The number of active genes represented in the chia object.
 #' @export
-proportion.genes <- function(chia.obj) {
-    return(number.of.genes(chia.obj) / number.of.nodes(chia.obj))
+proportion_genes <- function(chia.obj) {
+    return(number_of_genes(chia.obj) / number_of_nodes(chia.obj))
 }
 
 #' Return the proportion of active genes among all genes in a CHIA object.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return The proportion of active genes among all genes in the chia object.
 #' @export
-proportion.active.genes <- function(chia.obj) {
-    return(number.active.genes(chia.obj) / number.of.genes(chia.obj))
+proportion_active_genes <- function(chia.obj) {
+    return(number_active_genes(chia.obj) / number_of_genes(chia.obj))
 }
 
 #' Obtain the matrix of TF binding.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A matrix indicating which TF binds to which regions.
 #' @export
-get.tf <- function(chia.obj) {
-    stopifnot(has.transcription.factors(chia.obj))
+get_tf <- function(chia.obj) {
+    stopifnot(has_transcription_factors(chia.obj))
     retval = chia.obj$Regions[,grepl("^TF", colnames(chia.obj$Regions)), drop=FALSE]
-    colnames(retval) = get.tf.names(chia.obj)
+    colnames(retval) = get_tf_names(chia.obj)
     return(retval)
 }
 
 #' Obtain the name of transcription factors for which annotation is available.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A vector containing the names of the transcription factors for which annotation is available.
 #' @export
-get.tf.names <- function(chia.obj) {
-    stopifnot(has.transcription.factors(chia.obj))
+get_tf_names <- function(chia.obj) {
+    stopifnot(has_transcription_factors(chia.obj))
     all.cols = colnames(chia.obj$Regions)
     tf.cols = all.cols[grepl("^TF", all.cols)]
     return(gsub("TF.overlap.", "", tf.cols))
@@ -292,34 +292,34 @@ get.tf.names <- function(chia.obj) {
 
 #' Obtain the matrix of polymerase binding.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A matrix indicating which polymerases binds to which regions.
 #' @export
-get.polymerases <- function(chia.obj, overlap.threshold=0) {
-    return(ifelse(get.polymerases.percent(chia.obj) > overlap.threshold, 1, 0))
+get_polymerases <- function(chia.obj, overlap.threshold=0) {
+    return(ifelse(get_polymerases_percent(chia.obj) > overlap.threshold, 1, 0))
 }
 
 #' Obtain the matrix of polymerase binding as a percentage of the ChIA regions.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A matrix indicating which polymerases binds to which regions.
 #' @export
-get.polymerases.percent <- function(chia.obj) {
-    stopifnot(has.polymerases(chia.obj))
+get_polymerases_percent <- function(chia.obj) {
+    stopifnot(has_polymerases(chia.obj))
     retval = chia.obj$Regions[,grepl("^POL", colnames(chia.obj$Regions)), drop=FALSE]
-    colnames(retval) = get.polymerases.names(chia.obj)
+    colnames(retval) = get_polymerases_names(chia.obj)
     return(retval)
 }
 
 #' Obtain the names of polymerases for which annotation is available.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A vector containing the names of the polymerases for which annotation is available.
 #' @export
-get.polymerases.names <- function(chia.obj) {
+get_polymerases_names <- function(chia.obj) {
     all.cols = colnames(chia.obj$Regions)
     tf.cols = all.cols[grepl("^POL", all.cols)]
     return(gsub("^POL.", "", tf.cols))
@@ -327,34 +327,34 @@ get.polymerases.names <- function(chia.obj) {
 
 #' Obtain the matrix of histone marks binding.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A matrix indicating which histone marks binds to which regions.
 #' @export
-get.histones <- function(chia.obj, overlap.threshold=0) {
-    return(ifelse(get.histones.percent(chia.obj) > overlap.threshold, 1, 0))
+get_histones <- function(chia.obj, overlap.threshold=0) {
+    return(ifelse(get_histones_percent(chia.obj) > overlap.threshold, 1, 0))
 }
 
 #' Obtain the matrix of histone marks binding as a percentage of the ChIA regions..
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A matrix indicating which histone marks binds to which regions.
 #' @export
-get.histones.percent <- function(chia.obj) {
-    stopifnot(has.histone.marks(chia.obj))
+get_histones_percent <- function(chia.obj) {
+    stopifnot(has_histone_marks(chia.obj))
     retval = chia.obj$Regions[,grepl("^HIST", colnames(chia.obj$Regions)), drop=FALSE]
-    colnames(retval) = get.histones.names(chia.obj)
+    colnames(retval) = get_histones_names(chia.obj)
     return(retval)
 }
 
 #' Obtain the names of histone marks for which annotation is available.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A vector containing the names of the histone marks for which annotation is available.
 #' @export
-get.histones.names <- function(chia.obj) {
+get_histones_names <- function(chia.obj) {
     all.cols = colnames(chia.obj$Regions)
     tf.cols = all.cols[grepl("^HIST", all.cols)]
     return(gsub("^HIST.", "", tf.cols))
@@ -363,23 +363,23 @@ get.histones.names <- function(chia.obj) {
 #' Obtain a matrix of all possible ChIP data sets: transcription factors, polymerase-binding
 #' and histone marks.
 #'
-#' Combines the results of get.tf, get.polymerases and get.histones.
+#' Combines the results of get_tf, get_polymerases and get_histones.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A matrix describing which epigenetic marks appears on which regions.
 get.chips <- function(chia.obj, overlap.threshold=0) {
-    return(cbind(get.tf(chia.obj), get.polymerases(chia.obj, overlap.threshold), get.histones(chia.obj, overlap.threshold)))
+    return(cbind(get_tf(chia.obj), get_polymerases(chia.obj, overlap.threshold), get_histones(chia.obj, overlap.threshold)))
 }
 
 #' Obtain the names of ChIP data sets for which annotation is available.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A vector containing the names of the ChIP data sets for which annotation is available.
 #' @export
-get.chips.names <- function(chia.obj) {
-    return(c(get.tf.names(chia.obj), get.polymerases.names(chia.obj), get.histones.names(chia.obj)))
+get_chips_names <- function(chia.obj) {
+    return(c(get_tf_names(chia.obj), get_polymerases_names(chia.obj), get_histones_names(chia.obj)))
 }
 
 
@@ -392,8 +392,8 @@ get.chips.names <- function(chia.obj) {
 #'
 #' @return A logical vector indicating which regions bind the given transcription factor.
 #' @export
-nodes.with.tf <- function(chia.obj, tf.names, how.many=length(tf.names)) {
-    nodes.with.generic(chia.obj, tf.names, number.of.tfs, how.many)
+nodes_with_tf <- function(chia.obj, tf.names, how.many=length(tf.names)) {
+    nodes.with.generic(chia.obj, tf.names, number_of_tfs, how.many)
 }
 
 #' Obtain the indices of nodes bearing any or all of a set of transcription factors.
@@ -405,8 +405,8 @@ nodes.with.tf <- function(chia.obj, tf.names, how.many=length(tf.names)) {
 #'
 #' @return A logical vector indicating which regions bind the given transcription factor.
 #' @export
-nodes.with.polymerase <- function(chia.obj, polymerase.names, how.many=length(polymerase.names)) {
-    nodes.with.generic(chia.obj, polymerase.names, number.of.polymerases, how.many)
+nodes_with_polymerase <- function(chia.obj, polymerase.names, how.many=length(polymerase.names)) {
+    nodes.with.generic(chia.obj, polymerase.names, number_of_polymerases, how.many)
 }
 
 
@@ -419,8 +419,8 @@ nodes.with.polymerase <- function(chia.obj, polymerase.names, how.many=length(po
 #'
 #' @return A logical vector indicating which regions bind the given transcription factor.
 #' @export
-nodes.with.histone <- function(chia.obj, histone.names, how.many=length(histone.names)) {
-    nodes.with.generic(chia.obj, histone.names, number.of.histones, how.many)
+nodes_with_histone <- function(chia.obj, histone.names, how.many=length(histone.names)) {
+    nodes.with.generic(chia.obj, histone.names, number_of_histones, how.many)
 }
 
 #' Obtain the indices of nodes bearing any or all of a set of transcription factors.
@@ -432,8 +432,8 @@ nodes.with.histone <- function(chia.obj, histone.names, how.many=length(histone.
 #'
 #' @return A logical vector indicating which regions bind the given transcription factor.
 #' @export
-nodes.with.chip <- function(chia.obj, chip.names, how.many=length(chip.names)) {
-    nodes.with.generic(chia.obj, chip.names, number.of.chips, how.many)
+nodes_with_chip <- function(chia.obj, chip.names, how.many=length(chip.names)) {
+    nodes.with.generic(chia.obj, chip.names, number_of_chips, how.many)
 }
 
 nodes.with.generic <- function(chia.obj, object.names, number.function, how.many=length(object.names)) {
@@ -448,19 +448,19 @@ nodes.with.generic <- function(chia.obj, object.names, number.function, how.many
 #'
 #' @return An integer vector containing the number of TF in the list binding each region.
 #' @export
-number.of.tfs <- function(chia.obj, tf.names) {
-    number.of.generic(chia.obj, tf.names, get.tf)
+number_of_tfs <- function(chia.obj, tf.names) {
+    number.of.generic(chia.obj, tf.names, get_tf)
 }
 
-#' Obtain the number of polymerases from a given list that bind all regions within a ChIA-PET object.
+#' Obtain the number_of_polymerases from a given list that bind all regions within a ChIA-PET object.
 #'
 #' @param chia.obj A ChIA-PET object.
 #' @param polymerase.names The names of the transcription factor to look for.
 #'
-#' @return An integer vector containing the number of polymerases in the list binding each region.
+#' @return An integer vector containing the number_of_polymerases in the list binding each region.
 #' @export
-number.of.polymerases <- function(chia.obj, polymerase.names) {
-    number.of.generic(chia.obj, polymerase.names, get.polymerases)
+number_of_polymerases <- function(chia.obj, polymerase.names) {
+    number.of.generic(chia.obj, polymerase.names, get_polymerases)
 }
 
 #' Obtain the number of histone marks from a given list that bind all regions within a ChIA-PET object.
@@ -470,8 +470,8 @@ number.of.polymerases <- function(chia.obj, polymerase.names) {
 #'
 #' @return An integer vector containing the number of histone marks in the list binding each region.
 #' @export
-number.of.histones <- function(chia.obj, histone.names) {
-    number.of.generic(chia.obj, histone.names, get.histones)
+number_of_histones <- function(chia.obj, histone.names) {
+    number.of.generic(chia.obj, histone.names, get_histones)
 }
 
 #' Obtain the number of histone marks from a given list that bind all regions within a ChIA-PET object.
@@ -481,7 +481,7 @@ number.of.histones <- function(chia.obj, histone.names) {
 #'
 #' @return An integer vector containing the number of histone marks in the list binding each region.
 #' @export
-number.of.chips <- function(chia.obj, chip.names) {
+number_of_chips <- function(chia.obj, chip.names) {
     number.of.generic(chia.obj, chip.names, get.chips)
 }
 
@@ -508,10 +508,10 @@ number.of.generic <- function(chia.obj, object.names, get.function) {
 #'
 #' @return A named numeric vector containing the proportion of regions intersecting the ChIP datasets
 #' @export
-get.all.chip.proportion <- function(chia.obj) {
+get_all_chip_proportion <- function(chia.obj) {
     ret = c()
-    for(chip in get.chips.names(chia.obj)) {
-        ret[chip] = sum(number.of.chips(chia.obj, chip))/number.of.nodes(chia.obj)
+    for(chip in get_chips_names(chia.obj)) {
+        ret[chip] = sum(number_of_chips(chia.obj, chip))/number_of_nodes(chia.obj)
     }
     
     return(ret)
@@ -519,25 +519,25 @@ get.all.chip.proportion <- function(chia.obj) {
 
 #' Returns a list of all statistics for a given ChIA object.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
 #'
 #' @return A named list of calculated properties for the given ChIA object.
 #' @export
-get.all.statistics <- function(chia.obj) {
-    results = lapply(list("Number of nodes"            = number.of.nodes,
-                          "Number of contacts"         = number.of.contacts,
-                          "Number of components"       = number.of.components,
-                          "Average component size"     = average.component.size,
-                          "Number of genes"            = number.of.genes,
-                          "Number of active genes"     = number.active.genes,
-                          "Proportion of genes"        = proportion.genes,
-                          "Proportion of active genes" = proportion.active.genes),
+get_all_statistics <- function(chia.obj) {
+    results = lapply(list("Number of nodes"            = number_of_nodes,
+                          "Number of contacts"         = number_of_contacts,
+                          "Number of components"       = number_of_components,
+                          "Average component size"     = average_component_size,
+                          "Number of genes"            = number_of_genes,
+                          "Number of active genes"     = number_active_genes,
+                          "Proportion of genes"        = proportion_genes,
+                          "Proportion of active genes" = proportion_active_genes),
                     function(f) f(chia.obj))
 
     return(results)
 }
 
-#' Returns the shortest distances between a set of nodes and another one.
+#' Returns the shortest_distances between a set of nodes and another one.
 #'
 #' @param chia.obj The ChIA object on which distances must be computed.
 #' @param from A vector of indices describing the starting nodes in the distance calculations.
@@ -545,10 +545,10 @@ get.all.statistics <- function(chia.obj) {
 #'
 #' @return A vector containing the distance from all "from" nodes to all "to" nodes.
 #' @export
-shortest.distance <- function(chia.obj, from, to) {
+shortest_distance <- function(chia.obj, from, to) {
   dist.mat = distances(chia.obj$Graph, v=which(from), to=which(to))
   
-  # Get the shortest distance for all 'from' nodes to any 'to' nodes.
+  # Get the shortest_distance for all 'from' nodes to any 'to' nodes.
   shortest.dist = apply(dist.mat, 1, min)
   
   return(shortest.dist)
@@ -566,12 +566,12 @@ shortest.distance <- function(chia.obj, from, to) {
 #'    with the corresponding distance to nodes in 'to'.
 #' @export
 #' @import igraph
-summarize.distances <- function(chia.obj, from, to, max=3, values=FALSE) {
+summarize_distances <- function(chia.obj, from, to, max=3, values=FALSE) {
   # Get the matrix of pairwise distances.
   dist.mat = distances(chia.obj$Graph, v=which(from), to=which(to))
   
-  # Get the shortest distance for all 'from' nodes to any 'to' nodes.
-  shortest.dist = shortest.distance(chia.obj, from, to)
+  # Get the shortest_distance for all 'from' nodes to any 'to' nodes.
+  shortest.dist = shortest_distance(chia.obj, from, to)
   
   # Create table of distancs.
   dist.table = table(shortest.dist)
@@ -606,8 +606,8 @@ summarize.distances <- function(chia.obj, from, to, max=3, values=FALSE) {
 #'
 #' @return A logical vector indicating whcih regiosn are part of a gene network.
 #' @export
-regions.in.gene.network <- function(chia.obj, min.gene=2) {
-    stopifnot(has.components(chia.obj))
+regions_in_gene_network <- function(chia.obj, min.gene=2) {
+    stopifnot(has_components(chia.obj))
     
     component.summary = aggregate(chia.obj$Regions$Gene.Representative, 
                                   by=list(Component=chia.obj$Regions$Component.Id),
@@ -621,7 +621,7 @@ regions.in.gene.network <- function(chia.obj, min.gene=2) {
 #'
 #' @return A logical vector indicating which nodes are gene representatives.
 #' @export
-is.gene.representative <- function(chia.obj) {
+is_gene_representative <- function(chia.obj) {
     return(chia.obj$Regions$Gene.Representative)
 }
 
@@ -632,6 +632,6 @@ is.gene.representative <- function(chia.obj) {
 #'
 #' @return A data-frame containign the annotation for the selected genes.
 #' @export
-get.gene.annotation <- function(chia.obj, genenames) {
-    return(chia.obj$Regions[is.gene.representative(chia.obj) & chia.obj$Regions$SYMBOL %in% genenames,])
+get_gene_annotation <- function(chia.obj, genenames) {
+    return(chia.obj$Regions[is_gene_representative(chia.obj) & chia.obj$Regions$SYMBOL %in% genenames,])
 }

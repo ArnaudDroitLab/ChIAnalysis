@@ -1,6 +1,6 @@
 #' Associates centrality scores and boolean centrality markers to regions.
 #'
-#' @param chia.obj ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param which.measures A vector containing the names of the measures to be used
 #'   to assess centrality. Those can be "Degree", "Betweenness" and "Eigenvector".
 #' @param weight.attr The anme of the edge attribute to be sued as a weight in 
@@ -8,8 +8,8 @@
 #'
 #' @export
 #' @return The annotated chia.obj.
-associate.centralities <- function(chia.obj, which.measures=c("Degree", "Betweenness", "Eigenvector", "Closeness"), weight.attr=NULL) {
-  centralities = calculate.centralities(chia.obj, which.measures, weight.attr)
+associate_centralities <- function(chia.obj, which.measures=c("Degree", "Betweenness", "Eigenvector", "Closeness"), weight.attr=NULL) {
+  centralities = calculate_centralities(chia.obj, which.measures, weight.attr)
   chia.obj$Regions <- cbind(chia.obj$Regions, centralities)
 
   return(chia.obj)
@@ -17,7 +17,7 @@ associate.centralities <- function(chia.obj, which.measures=c("Degree", "Between
 
 #' Calculates centralities for all vertices in a graph.
 #'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param which.measures A vector containing the names of the measures to be used
 #'   to assess centrality. Those can be "Degree", "Betweenness" and "Eigenvector".
 #' @param weight.attr The anme of the edge attribute to be sued as a weight in 
@@ -25,7 +25,7 @@ associate.centralities <- function(chia.obj, which.measures=c("Degree", "Between
 #'
 #' @return A data-frame containing the centrality scores and markers for all vertices in the graph.
 #' @export
-calculate.centralities <- function(chia.obj, which.measures=c("Degree", "Betweenness", "Eigenvector", "Closeness"), weight.attr=NULL) {
+calculate_centralities <- function(chia.obj, which.measures=c("Degree", "Betweenness", "Eigenvector", "Closeness"), weight.attr=NULL) {
   # If weights should be used, set them as the weight edge attribute.
   if(!is.null(weight.attr)) {
     stopifnot(weight.attr %in% names(edge_attr(chia.obj$Graph)))
@@ -33,8 +33,8 @@ calculate.centralities <- function(chia.obj, which.measures=c("Degree", "Between
   }
 
   # Define a matrix and a vector to contain network-wide scores and centrality markers.
-  results.matrix = matrix(0, nrow=number.of.nodes(chia.obj), ncol=length(which.measures)+1, dimnames=list(NULL, c(which.measures, "Centrality.score")))
-  centrality.marker = rep(FALSE, number.of.nodes(chia.obj))
+  results.matrix = matrix(0, nrow=number_of_nodes(chia.obj), ncol=length(which.measures)+1, dimnames=list(NULL, c(which.measures, "Centrality.score")))
+  centrality.marker = rep(FALSE, number_of_nodes(chia.obj))
 
   # Loop over components to measure centrality. Most of these methods can be applied to
   # discontinuous components, but will give different results which might fail
@@ -99,7 +99,7 @@ calculate.centralities <- function(chia.obj, which.measures=c("Degree", "Between
 #' @param regions A \linkS4class{GRanges} object to annotate.
 #' @return The annotated regions.
 #' @export
-associate.is.in.factory <- function(regions){
+associate_is_in_factory <- function(regions){
   factories <- as.data.frame(regions)
   factories <- aggregate(Is.Gene.Active~Component.Id, data = factories[factories$Gene.Representative,], FUN = sum)
   factories <- factories$Component.Id[factories$Is.Gene.Active > 1]
@@ -107,22 +107,22 @@ associate.is.in.factory <- function(regions){
   return(regions)
 }
 
-#' Associates components ids and sizes to chia data, as returned by \code{\link{load.chia}}.
+#' Associates components ids and sizes to chia data, as returned by \code{\link{load_chia}}.
 #'
-#' @param chia.obj ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param split Should the data be divided into communities?
 #' @param oneByOne Sould the netwoks be treated one by one or as a whole?
 #' @param method What method sould be used to split data (ignored if split = \code{FALSE}).
 #' @return The annotated chia.obj.
 #' @export
-associate.components <- function(chia.obj){
+associate_components <- function(chia.obj){
   # Add data about components
   components.out <- components(chia.obj$Graph)
   chia.obj$Regions$Component.Id <- components.out$membership
   chia.obj$Regions$Component.size <- components.out$csize[components.out$membership]
 
   # Add a column with the number of edges in each community
-  left.df = as.data.frame(chia.left(chia.obj))
+  left.df = as.data.frame(chia_left(chia.obj))
   left.df$Edges <- 1
   number.edges.df <- aggregate(Edges~Component.Id, data = left.df, FUN = sum)
   chia.obj$Regions$Component.edges <- number.edges.df$Edges[match(chia.obj$Regions$Component.Id, number.edges.df$Component.Id)]
@@ -138,7 +138,7 @@ associate.components <- function(chia.obj){
 #' @return The \linkS4class{GRanges} object with associated genes.
 #' @importFrom plyr ddply mutate
 #' @export
-associate.gene <- function(regions, expression.data=NULL) {
+associate_gene <- function(regions, expression.data=NULL) {
   # Associate a gene to a contact only if it's in the promoter.
   promoter.subset = regions$Simple.annotation == "Promoter"
 
@@ -175,14 +175,14 @@ associate.gene <- function(regions, expression.data=NULL) {
 #' @return The ChIA-PET object, with added annotations.
 #' @importFrom GenomicRanges findOverlaps
 #' @export
-associate.regions.by.name <- function(chia.obj, annotation.regions, annotation.name) {
+associate_regions_by_name <- function(chia.obj, annotation.regions, annotation.name) {
   # If no name are provided, generate some.
   if(is.null(annotation.regions$name)) {
     annotation.regions$name = paste0(seqnames(annotation.regions), ":", start(annotation.regions), "-", end(annotation.regions))
   }
   
   # Find the first overlapping region.
-  overlap.indices = findOverlaps(get.granges(chia.obj), annotation.regions, select="first")
+  overlap.indices = findOverlaps(get_granges(chia.obj), annotation.regions, select="first")
   
   # Associate the region names to the chia object.
   chia.obj$Regions[[annotation.name]] = annotation.regions$name[overlap.indices]
@@ -205,7 +205,7 @@ associate.regions.by.name <- function(chia.obj, annotation.regions, annotation.n
 #'
 #' @return The ChIA object with the added annotation.
 #' @export
-add.gene.annotation <- function(chia.obj, values, label, representative.only=TRUE) {
+add_gene_annotation <- function(chia.obj, values, label, representative.only=TRUE) {
     # Associate the values with their gene.
     matched.values = values[chia.obj$Regions$SYMBOL]
     
@@ -222,8 +222,8 @@ add.gene.annotation <- function(chia.obj, values, label, representative.only=TRU
 
 #' Annotate "chia.obj", given as parameter.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.
-#' @param chia.param An object returned by build.chia.params indicating which data should be used for annotating the ChIA object.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.
+#' @param chia.param An object returned by build_chia_params indicating which data should be used for annotating the ChIA object.
 #' @param output.dir The name of the directory where to write the selected annotations.
 #' @param verbose If TRUE, console output is suppressed.
 #' @param skip.centrality If TRUE, centrality scores are not computed.
@@ -231,7 +231,7 @@ add.gene.annotation <- function(chia.obj, values, label, representative.only=TRU
 #' @return The annotated "\code{chia.obj}".
 #'
 #' @export
-annotate.chia <- function(chia.obj, chia.param, output.dir=".", verbose=TRUE, skip.centrality=FALSE) {
+annotate_chia <- function(chia.obj, chia.param, output.dir=".", verbose=TRUE, skip.centrality=FALSE) {
   # Create the output directory.
   dir.create(output.dir, recursive = TRUE, showWarnings=FALSE)
 
@@ -246,7 +246,7 @@ annotate.chia <- function(chia.obj, chia.param, output.dir=".", verbose=TRUE, sk
 
   # Associate genomic regions
   cat(date(), " : Associating genomic regions...\n",cat.sink)
-  tmp = associate.genomic.region(get.granges(chia.obj),
+  tmp = associate.genomic.region(get_granges(chia.obj),
                                  chia.param$genome.build,
                                  output.dir = output.dir,
                                  tssRegion = chia.param$tssRegion)
@@ -256,21 +256,21 @@ annotate.chia <- function(chia.obj, chia.param, output.dir=".", verbose=TRUE, sk
   # Associate chromatin states
   if(!is.null(chia.param$input.chrom.state)) {
     cat(date(), " : Associating chromatin states...\n",cat.sink)
-    chia.obj$Regions$Chrom.State = chrom.state.match(get.granges(chia.obj), chia.param$input.chrom.state)
+    chia.obj$Regions$Chrom.State = chrom.state.match(get_granges(chia.obj), chia.param$input.chrom.state)
     chia.obj$Regions$Simple.Chrom.State = simplify.chrom.state(chia.obj$Regions$Chrom.State)
   }
 
   # Associate transcription factors
   if(!is.null(chia.param$tf.regions)) {
     cat(date(), " : Associating transcription factors...\n",cat.sink)
-    tmp = associate.tf(get.granges(chia.obj), chia.param$tf.regions)
+    tmp = associate.tf(get_granges(chia.obj), chia.param$tf.regions)
     chia.obj$Regions = as.data.frame(tmp)
   }
 
   # Associate histone marks
   if(!is.null(chia.param$histone.regions)) {
     cat(date(), " : Associating histone marks...\n",cat.sink)
-    hist.matrix = region.overlap(get.granges(chia.obj), chia.param$histone.regions)
+    hist.matrix = region.overlap(get_granges(chia.obj), chia.param$histone.regions)
     colnames(hist.matrix) = paste0("HIST.", colnames(hist.matrix))
     chia.obj$Regions = cbind(chia.obj$Regions, hist.matrix)
   }
@@ -278,56 +278,56 @@ annotate.chia <- function(chia.obj, chia.param, output.dir=".", verbose=TRUE, sk
   # Associate known polymerase binding
   if(!is.null(chia.param$pol.regions)) {
     cat(date(), " : Associating polymerase II regions...\n",cat.sink)
-    pol.matrix = region.overlap(get.granges(chia.obj), chia.param$pol.regions)
+    pol.matrix = region.overlap(get_granges(chia.obj), chia.param$pol.regions)
     colnames(pol.matrix) = paste0("POL.", colnames(pol.matrix))
     chia.obj$Regions = cbind(chia.obj$Regions, pol.matrix)
   }
 
   # Associate genes to regions
   cat(date(), " : Associating genes...\n",cat.sink)
-  tmp = associate.gene(get.granges(chia.obj), chia.param$expression.data)
+  tmp = associate_gene(get_granges(chia.obj), chia.param$expression.data)
   chia.obj$Regions = as.data.frame(tmp)
 
   if(!is.null(chia.params$tad.regions)) {
-    chia.obj = associate.regions.by.name(chia.obj, chia.params$tad.regions, "TAD")
+    chia.obj = associate_regions_by_name(chia.obj, chia.params$tad.regions, "TAD")
   }
   
   if(!is.null(chia.params$compartments.regions)) {
-    chia.obj = associate.regions.by.name(chia.obj, chia.params$compartments.regions, "Compartment")
+    chia.obj = associate_regions_by_name(chia.obj, chia.params$compartments.regions, "Compartment")
   }
   
   # Associate tissue specificity and fitness scores if the organism allows it.
   if(chia.param$genome.build=="hg19" || chia.param$genome.build=="hg38") {
     cat(date(), " : Associating tissue specificity...\n",cat.sink)
-    tmp = associate.tissue.specificity.human(get.granges(chia.obj))
+    tmp = associate.tissue.specificity.human(get_granges(chia.obj))
     chia.obj$Regions = as.data.frame(tmp)
     cat(date(), " : Associating fitness score...\n",cat.sink)
-    tmp = associate.fitness.genes(get.granges(chia.obj))
+    tmp = associate.fitness.genes(get_granges(chia.obj))
     chia.obj$Regions = as.data.frame(tmp)
   }
 
   # Associate gene specific annotations.
   if(!is.null(chia.param$gene.annotations)) {
     for(gene.annotation in names(chia.param$gene.annotations)) {
-      chia.obj = add.gene.annotation(chia.obj, chia.param$gene.annotations[[gene.annotation]], gene.annotation)
+      chia.obj = add_gene_annotation(chia.obj, chia.param$gene.annotations[[gene.annotation]], gene.annotation)
     }
   }
   
   # Associate components ids and sizes
   cat(date(), " : Associating components...\n",cat.sink)
-  chia.obj = associate.components(chia.obj)
+  chia.obj = associate_components(chia.obj)
 
   # Associate centrality scores
   if(!skip.centrality) {
     cat(date(), " : Associating centrality scores...\n",cat.sink)
-    chia.obj = associate.centralities(chia.obj,
+    chia.obj = associate_centralities(chia.obj,
                                       which.measures=chia.param$centrality.measures,
                                       weight.attr=chia.param$weight.attr)
   }
 
   # Associate miscellaneous useful defnitions
   chia.obj$Regions = associate.is.gene.active(chia.obj$Regions)
-  chia.obj$Regions = associate.is.in.factory(chia.obj$Regions)
+  chia.obj$Regions = associate_is_in_factory(chia.obj$Regions)
 
   # If verbose output was turned off, close the dummy stream.
   if(!verbose) {

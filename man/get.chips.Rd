@@ -8,12 +8,12 @@ and histone marks.}
 get.chips(chia.obj, overlap.threshold = 0)
 }
 \arguments{
-\item{chia.obj}{A list containing the ChIA-PET data, as returned by \code{\link{load.chia}}.}
+\item{chia.obj}{A list containing the ChIA-PET data, as returned by \code{\link{load_chia}}.}
 }
 \value{
 A matrix describing which epigenetic marks appears on which regions.
 }
 \description{
-Combines the results of get.tf, get.polymerases and get.histones.
+Combines the results of get_tf, get_polymerases and get_histones.
 }
 

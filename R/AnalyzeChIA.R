@@ -1,6 +1,6 @@
 #' Create a heatmap by connectivity group.
 #'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param variable.name The name of the variable according to which the heatmap should be computed.
 #' @param label The name to give to the variable name in the resulting heatmap.
 #' @param output.dir The name of the directory where to save the heatmaps.
@@ -14,14 +14,14 @@
 #'
 #' @importFrom reshape2 melt
 #' @export
-contact.heatmap <- function(chia.obj, variable.name, label=NULL, output.dir=NULL, 
+contact_heatmap <- function(chia.obj, variable.name, label=NULL, output.dir=NULL, 
                             log.scale=FALSE, proportions=FALSE, stretch.scale=proportions, show.labels=FALSE, 
                             file.name=file.path(output.dir, paste0("Contact heatmap for ", label, ".pdf"))) {
-  type.df = data.frame(Left=chia.left(chia.obj)[,variable.name],
-                       Right=chia.right(chia.obj)[,variable.name],
+  type.df = data.frame(Left=chia_left(chia.obj)[,variable.name],
+                       Right=chia_right(chia.obj)[,variable.name],
                        stringsAsFactors=FALSE)
 
-  var.levels = levels(chia.left(chia.obj)[,variable.name])
+  var.levels = levels(chia_left(chia.obj)[,variable.name])
   results.matrix = matrix(NA, nrow=length(var.levels), ncol=length(var.levels), dimnames=list(var.levels, var.levels))
 
   for(i in 1:(length(var.levels))) {
@@ -93,17 +93,17 @@ contact.heatmap <- function(chia.obj, variable.name, label=NULL, output.dir=NULL
 #' @param chip.data A \linkS4class{GRangesList} containing the regions of the ChIp-seq data, with signal values.
 #' @param biosample The biosample identifier from ENCODE. Valid examples are GM12878, K562 or MCF-7.
 #' @param genome.build The name of the chosen annotation ("hg38", "hg19").
-#' @param chia.obj Annotated ChIA-PET data, as returned by \link{analyze.chia.pet} or \link{annotate.chia}.
+#' @param chia.obj Annotated ChIA-PET data, as returned by \link{analyze_chia_pet} or \link{annotate_chia}.
 #' @param output.dir The directory where to write the boxplots.
 #' @param TSS Should only the TSS regions be kept?
 #' @param tssRegion tssRegion A vector with the region range to TSS.
 #'
 #' @importFrom cowplot plot_grid
 #' @export
-boxplot.per.tf <- function(chip.data, biosample, genome.build, chia.obj, output.dir, TSS = TRUE, tssRegion = c(-3000, 3000)) {
+boxplot_per_tf <- function(chip.data, biosample, genome.build, chia.obj, output.dir, TSS = TRUE, tssRegion = c(-3000, 3000)) {
 
   # Extract ChIA-PET regions
-  chia.data <- get.granges(chia.obj)
+  chia.data <- get_granges(chia.obj)
 
   # Exctract all TF
   if (genome.build == "hg19"){
@@ -194,12 +194,12 @@ boxplot.per.tf <- function(chip.data, biosample, genome.build, chia.obj, output.
 
 #' Histogram of the proportion of "essential genes", by connectivity categories.
 #'
-#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param essential.genes The ID's of the genes to anlayze. The ID's refer the the ChIA-PET ID's of the nodes.
 #' @param label.x The title of the histogram.
 #' @param output.dir The name of the directory where to save the plot.
 #' @export
-histogram.essential.genes <- function(chia.obj, essential.genes, label.x, output.dir){
+histogram_essential_genes <- function(chia.obj, essential.genes, label.x, output.dir){
   # Convert to data.frame
   chia.annotated.df <- chia.obj$Regions
   # Cut the size into categories
@@ -224,7 +224,7 @@ histogram.essential.genes <- function(chia.obj, essential.genes, label.x, output
 #' Creates heatmaps of the proportion of a variable from the ChIA-PET annotation, given as parameter, in fonction of the networks.
 #' To use the transcription factors as variable, write "TF". This will create the same heatmaps, but with presence or absence of each factor instead of proportions.
 #'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param size.limit The networks must have a size over size.limit.
 #' @param variable.name Name of the column to use, or "TF" for transcription factors.
 #' @param label The label to add to the heatmap title (name of the variable).
@@ -235,7 +235,7 @@ histogram.essential.genes <- function(chia.obj, essential.genes, label.x, output
 #' @importFrom NMF aheatmap
 #'
 #' @export
-chia.plot.network.heatmap <- function(chia.obj, size.limit, variable.name, label, output.dir) {
+chia_plot_network_heatmap <- function(chia.obj, size.limit, variable.name, label, output.dir) {
   dir.create(output.dir, recursive = TRUE, showWarnings=FALSE)
 
   presence.by.tf <- function(chia.df){
@@ -349,22 +349,22 @@ genomewide.expression.vs.network <- function(chia.obj, chia.params, output.dir) 
 #'
 #' Creates a graph where each node represents a node category from the original chia.obj,
 #' and edge width represents the frequency of those contacts. Node size is
-#' also proportional to the number of nodes in the given category.
+#' also proportional to the number_of_nodes in the given category.
 #'
-#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate.chia}}.
+#' @param chia.obj A list containing the annotated ChIA-PET data, as returned by \code{\link{annotate_chia}}.
 #' @param col.name The name of the column on which the contact graph should be based.
 #' @param file.name The name of the output file.
 #'
 #' @import igraph
 #'
 #' @export
-fancy.topology <- function(chia.obj, col.name, file.name=paste0("Abstract inter-category contact graph for ", col.name, ".pdf")) {
+fancy_topology <- function(chia.obj, col.name, file.name=paste0("Abstract inter-category contact graph for ", col.name, ".pdf")) {
     # Remove any node with unknown chromatin state.
-    chia.subset = chia.vertex.subset(chia.obj, !is.na(chia.obj$Regions[[col.name]]))
+    chia.subset = chia_vertex_subset(chia.obj, !is.na(chia.obj$Regions[[col.name]]))
     
     # Get list of "left" and "right" items.
-    left = chia.left(chia.subset)[[col.name]]
-    right = chia.right(chia.subset)[[col.name]]
+    left = chia_left(chia.subset)[[col.name]]
+    right = chia_right(chia.subset)[[col.name]]
 
     # Cross-tabulate, and group elements where only order differ.
     cross.table = table(data.frame(Left=as.integer(left), Right=as.integer(right)))

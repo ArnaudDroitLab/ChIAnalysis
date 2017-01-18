@@ -15,9 +15,9 @@
 #' @importFrom TxDb.Hsapiens.UCSC.hg19.knownGene TxDb.Hsapiens.UCSC.hg19.knownGene
 #'
 #' @export
-coherence.test <- function(chia.obj, coherence.function, node.categories, m.hyper, output.file=NULL, ...) {
+coherence_test <- function(chia.obj, coherence.function, node.categories, m.hyper, output.file=NULL, ...) {
   # Apply the coherence function
-  coherence.list = category.apply(chia.obj, coherence.function, node.categories, ...)
+  coherence.list = category_apply(chia.obj, coherence.function, node.categories, ...)
   
   # Count the success/failures from each category.
   coherence.counts = lapply(coherence.list, function(x) {
@@ -39,7 +39,7 @@ coherence.test <- function(chia.obj, coherence.function, node.categories, m.hype
   # q = the number of coherent genes in the network
   # m = the number of coherent genes in total
   # n = the number of other genes in total
-  # k = the number of genes in the network
+  # k = the number_of_genes in the network
   q <- coherence.df[,1] + coherence.df[,2]
   m <- m.hyper
   n <- length(genes(TxDb.Hsapiens.UCSC.hg19.knownGene)) - m
@@ -111,7 +111,7 @@ coherence.test <- function(chia.obj, coherence.function, node.categories, m.hype
 #'
 #' @importFrom plyr revalue
 #' @export
-active.gene.coherence <- function(chia.obj) {
+active_gene_coherence <- function(chia.obj) {
     tmp = ifelse(chia.obj$Regions$Gene.Representative, chia.obj$Regions$Is.Gene.Active, NA)
     tmp = revalue(factor(tmp, levels=c(FALSE, TRUE)), c("FALSE"="Inactive", "TRUE"="Active"))
     names(tmp)[chia.obj$Regions$Gene.Representative] <- chia.obj$Regions$SYMBOL[chia.obj$Regions$Gene.Representative]
@@ -128,7 +128,7 @@ active.gene.coherence <- function(chia.obj) {
 #'   fold-change column.
 #'
 #' @export
-fold.change.coherence <- function(fc.column) {
+fold_change_coherence <- function(fc.column) {
     force(fc.column)
     function(chia.obj) {
         values = chia.obj$Regions[,fc.column]
@@ -153,7 +153,7 @@ fold.change.coherence <- function(fc.column) {
 #' @return A vector with a 2-level factor, where regions are classified either
 #'   as "Top", "Bottom" or NA according to their expression level.
 #' @export
-expression.coherence <- function(chia.obj, top, bottom) {
+expression_coherence <- function(chia.obj, top, bottom) {
   
   # Create the vector
   expression <- rep(NA, times = nrow(chia.obj$Regions))
