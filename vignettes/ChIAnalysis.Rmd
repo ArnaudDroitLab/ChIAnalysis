@@ -1,0 +1,77 @@
+---
+title: "Introduction to ChIAnalysis"
+author: "Eric Fournier"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to ChIAnalysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+ChIAnalysis: A toolset for analyzing ChIA-PET data
+====================================================================
+
+Eric Fournier, Audrey Baguette, Steve Bilodeau and Arnaud Droit.
+
+This package is distributed under the Artistic license 2.0.
+You are free to use and redistribute this software. 
+
+ChIA-PET experiments provides comprehensive information about the 
+3D-interactions of the genome which are mediated by a protein of interest.
+While such interactions are interesting on their own, placing them
+in the context of an overall interaction graph can lead to novel
+biological insights. ChIAnalysis is designed for such a purpose.
+
+This vignette will introduce the main features of the ChIAnalysis package.
+
+### Loading the ChIAnalysis package
+
+```{r libraryLoad, warning=FALSE}
+library(ChIAnalysis)
+```
+
+### Introduction
+
+To use ChIAnalysis, you will require a seven column, tab-separated file 
+containing the coordinates of the first interaction point in the first three 
+columns, the coordinates of the second interaction point in the next three, 
+and the number of reads supporting this interaction in the seventh column.
+
+|chr1|start1|end1|chr2|start2|end2|Nb Reads|
+|----|------|----|----|------|----|--------|
+
+The basic usage involves only 5 function calls.
+```{r basic_usage, eval = FALSE}
+    # Build a ChIAParameters object with annotation information.
+    chia_params = build_chia_params(biosample = "GM12878",
+                                    genome.build = "hg19")
+    
+    # Add any annotation made available by ENCODE
+    chia_params = add_encode_data(chia_params)
+    
+    # Load the input interactions
+    chia_obj = load_chia(input_file)
+    
+    # Add the relevant annotations.
+    chia_obj = annotate_chia(chia_obj, chia_params)
+    
+    # Perform all relevant analyses.
+    analyze_chia_pet(chia_obj, chia_params)
+```
+
+### Basic usage
+
+#### Adding annotation
+
+Blah.
+
+#### Subsetting the ChIA object.
+
+Bleh!
+
+### Advanced usage
+
+#### Producing custom plots
+
+Bloh!
